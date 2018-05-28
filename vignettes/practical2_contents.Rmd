@@ -8,191 +8,191 @@ options(replace.assign=FALSE,width=50)
 opts_chunk$set(fig.path='figure/graphics-', 
                cache.path='cache/graphics-', 
                fig.align='center', 
-                fig.width=4, fig.height=4, 
+               fig.width=4, fig.height=4, 
                fig.show='hold', cache=FALSE, par=TRUE)
 knit_hooks$set(crop=hook_pdfcrop)
 ```
 
 In this question, we are going to use a `for` statement to
-loop} over a large data set and construct some plots. To obtain
-the data, run the following piece of R code
+loop over a data set and construct some plots. The data we are going to use comes from a paper on malarial transmission traits and how they vary with temperature[^1]. This data was published to Data Dryad[^2]. To obtain the data, run the following piece of R code. 
+
+[^1]: Shapiro LLM, Whitehead SA, Thomas MB (2017) Quantifying the effects of temperature on mosquito and parasite traits that determine the transmission potential of human malaria. PLOS Biology 15(10): e2003489. https://doi.org/10.1371/journal.pbio.2003489
+
+[^2]: Shapiro LLM, Whitehead SA, Thomas MB (2017) Data from: Quantifying the effects of temperature on mosquito and parasite traits that determine the transmission potential of human malaria. Dryad Digital Repository. https://doi.org/10.5061/dryad.74839
+
 
 ```{r echo=TRUE}
 data(malaria, package = "jrProgBio")
-head(exper)
+head(malaria)
 ``` 
 
-The data frame `exper` represents an experiment, where we have ten treatments:
-$A, B, \ldots, J$ and measurements at some time points. We want to create a
-scatter plot of measurement against time, for each treatment type.
+The data frame `malaria` represents an experiment, where we have 6 temprerature treatments and measurements of sporozoite prevalence at over 25 days. Additionally the experiment is split into 2 blocks with each treatment in each block having 4 cups. A delightful design. We want to create a
+scatter and line plot of sporozoite prevalence over time, for each treatment combination. If you decide to read the original paper, we are recreating Figure 2 from the paper but with our own code.
 
 1. First we create a scatter plot of one treatment:
 
-    ```{r F1, echo=TRUE, eval=TRUE, tidy=FALSE, message=FALSE, fig.keep="none"}
-    library(dplyr)
-    treat_a = filter(exper, treat == "A")
-    plot(treat_a$time, treat_a$values)
-    ``` 
-   
- 
-1. To generate a scatter-plot for each treatment, we need to iterate over the different
-treatment types:
+```{r F1, echo=TRUE, eval=TRUE, tidy=FALSE, message=FALSE, fig.keep="none"}
+library(dplyr)
+treat_a = filter(malaria, Temperature == 21)
+plot(treat_a$Sporozoite.Prevalence, treat_a$Day)
+```
 
-    ```{r echo=FALSE}
-    treatment = tail(exper, 1)$treat
-    group = filter(exper, treat == treatment)
-    ```
-    ```{r results='hide', fig.keep='none', tidy=FALSE, echo = TRUE, eval=FALSE}
-    for(treatment in unique(exper$treat)) {
-      group = filter(exper, treat == treatment)
-      plot(group$time, group$values)
-      readline("Hit return for next plot")
-    }
-    ``` 
-    * What does `unique(exper$treat)` give?
-        ```{r}
-        ## It gives all treatments.
-        ```
-    * In the `for` loop, what variable is changing? What are it's possible values?
-        ```{r}
-        ## The treat variable is changing. 
-        ## It goes through the different treatments.
-        ```
-    * What does the `readline()` function do?
-        
-        ```{r}
-        ## It halts execution, waits for user input
-        ```
+
+1. To generate a scatter-plot for each temperature, we need to iterate over the different temperatures:
+
+```{r results='hide', fig.keep='none', tidy=FALSE, echo = TRUE, eval=FALSE}
+for(temp in unique(malaria$Temperature)) {
+  group = filter(malaria, Temperature == temp)
+  plot(group$Sporozoite.Prevalence, group$Day)
+  readline("Hit return for next plot")
+}
+```
+* What does `unique(malaria$Temperature)` give?
+```{r}
+## It gives all temperatures
+```
+* In the `for` loop, what variable is changing? What are it's possible values?
+```{r}
+## The Temperature variable is changing.
+## It goes through the different temps.
+```
+* What does the `readline()` function do?
+
+```{r}
+## It halts execution, waits for user input
+```
 
 
 ## Questions
 
 1. The default axis labels aren't great. So we can change the $x$-axis label using `xlab`:
-    ```{r fig.keep='none', tidy=FALSE, echo=TRUE}
-     plot(group$time, group$values, xlab="Time")
-    ```
-    ```{r, fig.keep="none"}
-    plot(group$time, group$values,
-         xlab="Time", ylab="Measurement")
-    ```
-    Use the `ylab` argument to alter the $y$-axis label.
+```{r fig.keep='none', tidy=FALSE, echo=TRUE}
+plot(group$Sporozoite.Prevalence, group$Day, xlab = "Day")
+```
+```{r, fig.keep="none"}
+plot(group$Sporozoite.Prevalence, group$Day,
+     xlab = "Day", ylab = "Sporozoite Prevalence")
+```
+Use the `ylab` argument to alter the $y$-axis label.
 
 1. To add a title to a plot we use the `main` argument, viz:
 
-    ```{r F2, tidy=FALSE, fig.keep="none"}
-     plot(group$time, group$values, 
-      main="Treatment", xlab="Time", ylab="Measurement")
-    ```
+```{r F2, tidy=FALSE, fig.keep="none"}
+plot(group$Sporozoite.Prevalence, group$Day,
+     xlab = "Day", ylab = "Sporozoite Prevalence",
+     main = "Treatment")
+```
 
-    We can combine strings/characters using the `paste()` function,
+We can combine strings/characters using the `paste()` function,
 
-    ```{r }
-    paste("Treatment", treatment)
-    ```
+```{r, eval=FALSE}
+paste("Treatment", temp)
+```
 
-    Rather than have a static title, make the title of each plot display the treatment type.
+Rather than have a static title, make the title of each plot display the treatment type.
 
-    ```{r fig.keep='none', tidy=FALSE}
-     plot(group$time, group$values, main = paste("Treament", treatment),
-      xlab = "Time", ylab = "Measurement")
-    ``` 
+```{r fig.keep='none', tidy=FALSE}
+plot(group$Sporozoite.Prevalence, group$Day,
+     xlab = "Day", ylab = "Sporozoite Prevalence",
+     main = paste("Temperature :", temp))
+```
 
-1. The y-axis range should really be the same in all graphics. Add a `ylim` argument 
+1. The y-axis range should really be the same in all graphics. Add a `ylim` argument
 to fix the range. __Hint__: Work out the range before the `for` loop.
 
-    ```{r  fig.keep='none', tidy=FALSE}
-    range(exper$values)
-    plot(group$time, group$values, 
-      main=paste("Treament", treatment), xlab="Time", ylab="Measurement",
-      ylim=c(-2, 10))
-    ``` 
-
-
-1. At each iteration, use the `message()` function to print the average measurement level across all time points.
-
-    ```{r results='hide', message=FALSE}
-    ##Within the for loop have the line
-    message(mean(group$values))
-    ```
-
-1. On each graph, highlight any observations with a blue point if they are
-larger than the mean + standard deviations or less than the mean - 
-  standard deviations. Use the `points()` function to highlight a point.
-  __Hint__: You don't need `if` statements here. 
-  Just subset your data frame and pass this new data frame to the points function.
-  For example, to highlight the points (1,2) and (3, 4) we use the command:
-  
-    ```{r echo=-1, fig.keep='none'}
-    plot(0)
-    points(c(1, 3), c(2, 4), col=2)
-    ```
-  
-    ```{r fig.keep='none', message=FALSE, tidy=FALSE}
-     plot(group$time, group$values,
-      ylab = "Measurement", xlab="Time",
-      main=paste("Treatment", treatment))
-
-    ##Calculate the limits
-    values = group$values
-    message(mean(values))
-    upper_lim = mean(values) + sd(values)
-    lower_lim = mean(values) - sd(values)
-    
-    ##Extract the points
-    outliers = filter(group, values > upper_lim | values < lower_lim)
-    ##pch=19 gives a solid dot
-    ##See ?points
-    points(outliers$time, outliers$values, col=4, pch=19)
-    ```
-  
-
-1. Suppose we wanted to save individual graphs in a pdf file. Add the `pdf()`
-function to your code save the resulting graph. To get unique file names, use the paste
-command:
-
-    ```{r}
-    filename = paste0("file", treatment, ".pdf")
-    ```
-1. Put your code, i.e. the `for` loop and plotting commands, in a function which takes the data frame as an argument.
-
-
-## Solutions
-
-Solutions are contained within this package:
-```{r eval=FALSE, echo=TRUE}
-vignette("solutions2", package = "jrProgramming")
+```{r  fig.keep='none', tidy=FALSE}
+range(malaria$Sporozoite.Prevalence)
+plot(group$Sporozoite.Prevalence, group$Day,
+     xlab = "Day", ylab = "Sporozoite Prevalence",
+     main = paste("Temperature :", temp),
+     ylim = c(0, 1))
 ```
 
+1. At each iteration, use the `message()` function to print the average sporoziote prevalence across all time points and replicates.
 
-```{r tidy=FALSE}
-## FULL SOLUTION
-viewgraphs = function(exper,  save=FALSE) {
-  for(treat in unique(exper$treat)) {
-    if(save) {
-      filename = paste("file", treat, ".pdf", sep="")
-      pdf(filename)
-    }
-    
-   plot(group$time, group$values,
-      ylab="Measurement", xlab="Time",
-      main=paste("Treatment", treat))
-
-    ##Calculate the limits
-    values = group$values
-    message(mean(values))
-    upper_lim = mean(values) + sd(values)
-    lower_lim = mean(values) - sd(values)
-    
-    ##Extract the points
-    outliers = filter(group, values > upper_lim | values < lower_lim)
-    ##pch=19 gives a solid dot
-    ##See ?points
-    points(outliers$time, outliers$values, col=4, pch=19)
-    if(save){
-      dev.off()
-    } else {  
-      readline("Hit return for next plot\n")
-    }
-  }
-}
+```{r results='hide', message=FALSE}
+##Within the for loop have the line
+message(mean(group$Sporozoite.Prevalence))
 ```
+
+<!-- 1. On each graph, highlight any observations with a blue point if they are -->
+<!-- larger than the mean + standard deviations or less than the mean -  -->
+<!-- standard deviations. Use the `points()` function to highlight a point. -->
+<!-- __Hint__: You don't need `if` statements here.  -->
+<!-- Just subset your data frame and pass this new data frame to the points function. -->
+<!-- For example, to highlight the points (1,2) and (3, 4) we use the command: -->
+
+<!-- ```{r echo=-1, fig.keep='none'} -->
+<!-- plot(0) -->
+<!-- points(c(1, 3), c(2, 4), col=2) -->
+<!-- ``` -->
+
+<!-- ```{r fig.keep='none', message=FALSE, tidy=FALSE} -->
+<!-- plot(group$time, group$values, -->
+<!--      ylab = "Measurement", xlab="Time", -->
+<!--      main=paste("Treatment", treatment)) -->
+
+<!-- ##Calculate the limits -->
+<!-- values = group$values -->
+<!-- message(mean(values)) -->
+<!-- upper_lim = mean(values) + sd(values) -->
+<!-- lower_lim = mean(values) - sd(values) -->
+
+<!-- ##Extract the points -->
+<!-- outliers = filter(group, values > upper_lim | values < lower_lim) -->
+<!-- ##pch=19 gives a solid dot -->
+<!-- ##See ?points -->
+<!-- points(outliers$time, outliers$values, col=4, pch=19) -->
+<!-- ``` -->
+
+
+<!-- 1. Suppose we wanted to save individual graphs in a pdf file. Add the `pdf()` -->
+<!-- function to your code save the resulting graph. To get unique file names, use the paste -->
+<!-- command: -->
+
+<!-- ```{r} -->
+<!-- filename = paste0("file", treatment, ".pdf") -->
+<!-- ``` -->
+<!-- 1. Put your code, i.e. the `for` loop and plotting commands, in a function which takes the data frame as an argument. -->
+
+
+<!-- ## Solutions -->
+
+<!-- Solutions are contained within this package: -->
+<!-- ```{r eval=FALSE, echo=TRUE} -->
+<!-- vignette("solutions2", package = "jrProgramming") -->
+<!-- ``` -->
+
+
+<!-- ```{r tidy=FALSE} -->
+<!-- ## FULL SOLUTION -->
+<!-- viewgraphs = function(exper,  save=FALSE) { -->
+<!--   for(treat in unique(exper$treat)) { -->
+<!--     if(save) { -->
+<!--       filename = paste("file", treat, ".pdf", sep="") -->
+<!--       pdf(filename) -->
+<!--     } -->
+
+<!--     plot(group$time, group$values, -->
+<!--          ylab="Measurement", xlab="Time", -->
+<!--          main=paste("Treatment", treat)) -->
+
+<!--     ##Calculate the limits -->
+<!--     values = group$values -->
+<!--     message(mean(values)) -->
+<!--     upper_lim = mean(values) + sd(values) -->
+<!--     lower_lim = mean(values) - sd(values) -->
+
+<!--     ##Extract the points -->
+<!--     outliers = filter(group, values > upper_lim | values < lower_lim) -->
+<!--     ##pch=19 gives a solid dot -->
+<!--     ##See ?points -->
+<!--     points(outliers$time, outliers$values, col=4, pch=19) -->
+<!--     if(save){ -->
+<!--       dev.off() -->
+<!--     } else {   -->
+<!--       readline("Hit return for next plot\n") -->
+<!--     } -->
+<!--   } -->
+<!-- } -->
+<!-- ``` -->
