@@ -1,3 +1,8 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
 ```{r, include = FALSE, cache = FALSE}
 library(knitr)
 # opts_knit$set(out.format = "latex")
@@ -40,11 +45,11 @@ plot(treat_a$Sporozoite.Prevalence, treat_a$Day)
 
 1. To generate a scatter-plot for each temperature, we need to iterate over the different temperatures:
 
-```{r results='hide', fig.keep='none', tidy=FALSE, echo = TRUE, eval=FALSE}
+```{r results='hide', tidy=FALSE, echo = TRUE, eval=FALSE}
+par(mfrow = c(2, 3))
 for(temp in unique(malaria$Temperature)) {
   group = filter(malaria, Temperature == temp)
-  plot(group$Sporozoite.Prevalence, group$Day)
-  readline("Hit return for next plot")
+  plot(group$Day, group$Sporozoite.Prevalence)
 }
 ```
 * What does `unique(malaria$Temperature)` give?
@@ -56,29 +61,29 @@ for(temp in unique(malaria$Temperature)) {
 ## The Temperature variable is changing.
 ## It goes through the different temps.
 ```
-* What does the `readline()` function do?
+* What does the `par()` function do? And how can you use the `mfrow` argument?
 
 ```{r}
-## It halts execution, waits for user input
+## It sets up the graphical parameters of the plot and the mfrow argumement is used to split the plotting area into panels.
 ```
 
 
 ## Questions
 
 1. The default axis labels aren't great. So we can change the $x$-axis label using `xlab`:
-```{r fig.keep='none', tidy=FALSE, echo=TRUE}
-plot(group$Sporozoite.Prevalence, group$Day, xlab = "Day")
+```{r fig.keep='none', tidy=FALSE, echo=TRUE, eval=FALSE}
+plot(group$Day, group$Sporozoite.Prevalence, xlab = "Day")
 ```
-```{r, fig.keep="none"}
-plot(group$Sporozoite.Prevalence, group$Day,
+```{r, fig.keep="none", eval=FALSE}
+plot(group$Day, group$Sporozoite.Prevalence,
      xlab = "Day", ylab = "Sporozoite Prevalence")
 ```
 Use the `ylab` argument to alter the $y$-axis label.
 
 1. To add a title to a plot we use the `main` argument, viz:
 
-```{r F2, tidy=FALSE, fig.keep="none"}
-plot(group$Sporozoite.Prevalence, group$Day,
+```{r F2, tidy=FALSE, fig.keep="none", eval=FALSE}
+plot(group$Day, group$Sporozoite.Prevalence,
      xlab = "Day", ylab = "Sporozoite Prevalence",
      main = "Treatment")
 ```
@@ -91,108 +96,199 @@ paste("Treatment", temp)
 
 Rather than have a static title, make the title of each plot display the treatment type.
 
-```{r fig.keep='none', tidy=FALSE}
-plot(group$Sporozoite.Prevalence, group$Day,
+```{r fig.keep='none', tidy=FALSE, eval=FALSE}
+plot(group$Day, group$Sporozoite.Prevalence,
      xlab = "Day", ylab = "Sporozoite Prevalence",
      main = paste("Temperature :", temp))
 ```
 
-1. The y-axis range should really be the same in all graphics. Add a `ylim` argument
-to fix the range. __Hint__: Work out the range before the `for` loop.
+1. The axis ranges should really be the same in all graphics. Add `ylim` and `xlim` arguments to fix the range. __Hint__: Work out the range before the `for` loop using the `range()` function.
 
-```{r  fig.keep='none', tidy=FALSE}
-range(malaria$Sporozoite.Prevalence)
-plot(group$Sporozoite.Prevalence, group$Day,
+```{r  fig.keep='none', tidy=FALSE, eval=FALSE}
+ylims = range(malaria$Sporozoite.Prevalence)
+xlims = range(malaria$Day)
+
+plot(group$Day, group$Sporozoite.Prevalence,
      xlab = "Day", ylab = "Sporozoite Prevalence",
      main = paste("Temperature :", temp),
-     ylim = c(0, 1))
+     ylim = ylims, xlim = xlims)
 ```
 
-1. At each iteration, use the `message()` function to print the average sporoziote prevalence across all time points and replicates.
+1. For each graph, we want to add colour to the points to represent which experimental block they come from. We can first use `type = "n"` to produce and empty plot, then create additionl subsets of the data and use the `points()` function to add points to the graph.
 
-```{r results='hide', message=FALSE}
-##Within the for loop have the line
-message(mean(group$Sporozoite.Prevalence))
+__Hint__: You don't need `if` statements here.
+Just subset your data frame and pass this new data frame to the points function.
+Below is an example of how we might highlight the 5th and 6th points in a dummy dataset:
+
+```{r echo=-1, fig.keep='none', eval=FALSE}
+# create the data
+x = 1:10
+y = rnorm(10)
+
+# plot it
+plot(x, y)
+
+# add a few coloured points
+points(x[5], y[5], col="red")
 ```
 
-<!-- 1. On each graph, highlight any observations with a blue point if they are -->
-<!-- larger than the mean + standard deviations or less than the mean -  -->
-<!-- standard deviations. Use the `points()` function to highlight a point. -->
-<!-- __Hint__: You don't need `if` statements here.  -->
-<!-- Just subset your data frame and pass this new data frame to the points function. -->
-<!-- For example, to highlight the points (1,2) and (3, 4) we use the command: -->
+```{r fig.keep='none', message=FALSE, tidy=FALSE, eval=FALSE}
+plot(group$Day, group$Sporozoite.Prevalence,
+     xlab = "Day", ylab = "Sporozoite Prevalence",
+     main = paste("Temperature :", temp),
+     ylim = ylims, xlim = xlims, type = "n")
 
-<!-- ```{r echo=-1, fig.keep='none'} -->
-<!-- plot(0) -->
-<!-- points(c(1, 3), c(2, 4), col=2) -->
-<!-- ``` -->
+##Extract the points
+block_0 = filter(group, Block == 0)
+block_1 = filter(group, Block == 1)
 
-<!-- ```{r fig.keep='none', message=FALSE, tidy=FALSE} -->
-<!-- plot(group$time, group$values, -->
-<!--      ylab = "Measurement", xlab="Time", -->
-<!--      main=paste("Treatment", treatment)) -->
+##pch=19 gives a solid dot
+##See ?points
+points(block_0$Day, block_0$Sporozoite.Prevalence, col="blue", pch=19)
+points(block_1$Day, block_1$Sporozoite.Prevalence, col="red", pch=19)
+```
 
-<!-- ##Calculate the limits -->
-<!-- values = group$values -->
-<!-- message(mean(values)) -->
-<!-- upper_lim = mean(values) + sd(values) -->
-<!-- lower_lim = mean(values) - sd(values) -->
+1. For extra bonus points see if you can add an internal loop for each block to add the lines for each cup. You should end up with two colours but 4 line traces of each colour (and your points of course). Use the `lines()` function in the same way you used the `points()` function.
 
-<!-- ##Extract the points -->
-<!-- outliers = filter(group, values > upper_lim | values < lower_lim) -->
-<!-- ##pch=19 gives a solid dot -->
-<!-- ##See ?points -->
-<!-- points(outliers$time, outliers$values, col=4, pch=19) -->
-<!-- ``` -->
+__Hint__: This is an analogous loop to the one we started with, for each cup first filter the data down and then add some lines. You are allowed to have as deeply nested loops as you like.
 
+```{r fig.keep='none', message=FALSE, tidy=FALSE, eval=FALSE}
+plot(group$Day, group$Sporozoite.Prevalence,
+     xlab = "Day", ylab = "Sporozoite Prevalence",
+     main = paste("Temperature :", temp),
+     ylim = ylims, xlim = xlims, type = "n")
 
-<!-- 1. Suppose we wanted to save individual graphs in a pdf file. Add the `pdf()` -->
-<!-- function to your code save the resulting graph. To get unique file names, use the paste -->
-<!-- command: -->
+##Extract the points
+block_0 = filter(group, Block == 0)
+block_1 = filter(group, Block == 1)
 
-<!-- ```{r} -->
-<!-- filename = paste0("file", treatment, ".pdf") -->
-<!-- ``` -->
-<!-- 1. Put your code, i.e. the `for` loop and plotting commands, in a function which takes the data frame as an argument. -->
+##pch=19 gives a solid dot
+##See ?points
+points(block_0$Day, block_0$Sporozoite.Prevalence, col="blue", pch=19)
+for(cup in unique(block_0$Cup)) {
+  cup_group = filter(block_0, Cup == cup)
+  lines(cup_group$Day, cup_group$Sporozoite.Prevalence, col = "blue")
+}
+points(block_1$Day, block_1$Sporozoite.Prevalence, col="red", pch=19)
+for(cup in unique(block_1$Cup)) {
+  cup_group = filter(block_1, Cup == cup)
+  lines(cup_group$Day, cup_group$Sporozoite.Prevalence, col = "red")
+}
+```
 
+You should end up with a plot that looks something like this:
 
-<!-- ## Solutions -->
+```{r message=FALSE, tidy=FALSE, echo=FALSE, eval=TRUE, fig.height=3}
+par(mfrow = c(2, 3), mar = c(2.5, 2.5, 1, 1), mgp = c(1, 0.5, 0))
 
-<!-- Solutions are contained within this package: -->
-<!-- ```{r eval=FALSE, echo=TRUE} -->
-<!-- vignette("solutions2", package = "jrProgramming") -->
-<!-- ``` -->
+ylims = range(malaria$Sporozoite.Prevalence)
+xlims = range(malaria$Day)
 
+for(temp in unique(malaria$Temperature)) {
+  
+  group = filter(malaria, Temperature == temp)
+  
+  cex_val = 0.6
+  plot(group$Day, group$Sporozoite.Prevalence,
+       xlab = "Day", ylab = "Sporozoite Prevalence",
+       main = paste("Temperature :", temp),
+       ylim = ylims, xlim = xlims, type = "n",
+       cex.lab=cex_val, cex.axis=cex_val, cex.main=cex_val, cex.sub=cex_val)
+  
+  ## Extract the points
+  block_0 = filter(group, Block == 0)
+  block_1 = filter(group, Block == 1)
+  
+  ## Plot the subsets
+  blue = "#0000ff75"
+  points(block_0$Day, block_0$Sporozoite.Prevalence, 
+         col=blue, pch=19, cex = cex_val)
+  for(cup in unique(block_0$Cup)) {
+    cup_group = filter(block_0, Cup == cup)
+    lines(cup_group$Day, cup_group$Sporozoite.Prevalence, 
+          col = blue, cex = cex_val)
+  }
+  
+  red = "#ff000075"
+  points(block_1$Day, block_1$Sporozoite.Prevalence, 
+         col=red, pch=19, cex = cex_val)
+  for(cup in unique(block_1$Cup)) {
+    cup_group = filter(block_1, Cup == cup)
+    lines(cup_group$Day, cup_group$Sporozoite.Prevalence, 
+          col = red, cex = cex_val)
+  }
+  
+}
+```
 
-<!-- ```{r tidy=FALSE} -->
-<!-- ## FULL SOLUTION -->
-<!-- viewgraphs = function(exper,  save=FALSE) { -->
-<!--   for(treat in unique(exper$treat)) { -->
-<!--     if(save) { -->
-<!--       filename = paste("file", treat, ".pdf", sep="") -->
-<!--       pdf(filename) -->
-<!--     } -->
+Can you think of further ways to use programming to make this code neater?
+1. Suppose we wanted to save this multi-panel graph in a pdf file. Add the `pdf()` function to your code save the resulting graph:
 
-<!--     plot(group$time, group$values, -->
-<!--          ylab="Measurement", xlab="Time", -->
-<!--          main=paste("Treatment", treat)) -->
+```{r, eval=FALSE, echo=TRUE}
+# decide on a filename and path
+filename = "my_awesome_figure.pdf"
 
-<!--     ##Calculate the limits -->
-<!--     values = group$values -->
-<!--     message(mean(values)) -->
-<!--     upper_lim = mean(values) + sd(values) -->
-<!--     lower_lim = mean(values) - sd(values) -->
+# do your plotting
+plot(0)
 
-<!--     ##Extract the points -->
-<!--     outliers = filter(group, values > upper_lim | values < lower_lim) -->
-<!--     ##pch=19 gives a solid dot -->
-<!--     ##See ?points -->
-<!--     points(outliers$time, outliers$values, col=4, pch=19) -->
-<!--     if(save){ -->
-<!--       dev.off() -->
-<!--     } else {   -->
-<!--       readline("Hit return for next plot\n") -->
-<!--     } -->
-<!--   } -->
-<!-- } -->
-<!-- ``` -->
+# close the connection to the file
+dev.off()
+```
+
+1. Finally put your code, i.e. the `for` loop and plotting commands, in a function which takes the data frame as an argument.
+
+## Solutions
+
+Solutions are contained within this package:
+```{r eval=FALSE, echo=TRUE}
+vignette("solutions2", package = "jrProgBio")
+```
+
+```{r message=FALSE, tidy=FALSE, eval=FALSE}
+## FULL SOLUTION
+viewgraphs = function(malaria, save=FALSE) {
+  
+  if(save) {
+    filename = paste("file", treat, ".pdf", sep="")
+    pdf(filename)
+  }
+  
+  par(mfrow = c(2, 3))
+  
+  ylims = range(malaria$Sporozoite.Prevalence)
+  xlims = range(malaria$Day)
+  
+  for(temp in unique(malaria$Temperature)) {
+    
+    group = filter(malaria, Temperature == temp)
+    
+    plot(group$Day, group$Sporozoite.Prevalence,
+         xlab = "Day", ylab = "Sporozoite Prevalence",
+         main = paste("Temperature :", temp),
+         ylim = ylims, xlim = xlims, type = "n")
+    
+    ## Extract the points
+    block_0 = filter(group, Block == 0)
+    block_1 = filter(group, Block == 1)
+    
+    ## Plot the subsets
+    points(block_0$Day, block_0$Sporozoite.Prevalence, col="blue", pch=19)
+    for(cup in unique(block_0$Cup)) {
+      cup_group = filter(block_0, Cup == cup)
+      lines(cup_group$Day, cup_group$Sporozoite.Prevalence, col = "blue")
+    }
+    
+    points(block_1$Day, block_1$Sporozoite.Prevalence, col="red", pch=19)
+    for(cup in unique(block_1$Cup)) {
+      cup_group = filter(block_1, Cup == cup)
+      lines(cup_group$Day, cup_group$Sporozoite.Prevalence, col = "red")
+    }
+    
+  }
+  
+  if(save){
+    dev.off()
+  }
+  
+}
+```
