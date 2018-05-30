@@ -47,6 +47,7 @@ knit_hooks$set(par=function(before, options, envir){
 
 \usepackage{microtype}
 \begin{document}
+\SweaveOpts{concordance=TRUE}
 
 \maketitle% this prints the handout title, author, and date
 
