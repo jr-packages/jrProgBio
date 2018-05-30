@@ -39,17 +39,17 @@ scatter and line plot of sporozoite prevalence over time, for each treatment com
 ```{r F1, echo=TRUE, eval=TRUE, tidy=FALSE, message=FALSE, fig.keep="none"}
 library(dplyr)
 treat_a = filter(malaria, Temperature == 21)
-plot(treat_a$Sporozoite.Prevalence, treat_a$Day)
+plot(treat_a$Sporozoite_Prevalence, treat_a$Day)
 ```
 
 
-1. To generate a scatter-plot for each temperature, we need to iterate over the different temperatures:
+2. To generate a scatter-plot for each temperature, we need to iterate over the different temperatures:
 
 ```{r results='hide', tidy=FALSE, echo = TRUE, eval=FALSE}
 par(mfrow = c(2, 3))
 for(temp in unique(malaria$Temperature)) {
   group = filter(malaria, Temperature == temp)
-  plot(group$Day, group$Sporozoite.Prevalence)
+  plot(group$Day, group$Sporozoite_Prevalence)
 }
 ```
 * What does `unique(malaria$Temperature)` give?
@@ -72,49 +72,49 @@ for(temp in unique(malaria$Temperature)) {
 
 1. The default axis labels aren't great. So we can change the $x$-axis label using `xlab`:
 ```{r fig.keep='none', tidy=FALSE, echo=TRUE, eval=FALSE}
-plot(group$Day, group$Sporozoite.Prevalence, xlab = "Day")
+plot(group$Day, group$Sporozoite_Prevalence, xlab = "Day")
 ```
 ```{r, fig.keep="none", eval=FALSE}
-plot(group$Day, group$Sporozoite.Prevalence,
+plot(group$Day, group$Sporozoite_Prevalence,
      xlab = "Day", ylab = "Sporozoite Prevalence")
 ```
 Use the `ylab` argument to alter the $y$-axis label.
 
-1. To add a title to a plot we use the `main` argument, viz:
+2. To add a title to a plot we use the `main` argument, viz:
 
-```{r F2, tidy=FALSE, fig.keep="none", eval=FALSE}
-plot(group$Day, group$Sporozoite.Prevalence,
+```{r F2, tidy=FALSE, fig.keep="none", eval=FALSE, echo=TRUE}
+plot(group$Day, group$Sporozoite_Prevalence,
      xlab = "Day", ylab = "Sporozoite Prevalence",
      main = "Treatment")
 ```
 
 We can combine strings/characters using the `paste()` function,
 
-```{r, eval=FALSE}
+```{r, eval=FALSE, echo=TRUE}
 paste("Treatment", temp)
 ```
 
 Rather than have a static title, make the title of each plot display the treatment type.
 
 ```{r fig.keep='none', tidy=FALSE, eval=FALSE}
-plot(group$Day, group$Sporozoite.Prevalence,
+plot(group$Day, group$Sporozoite_Prevalence,
      xlab = "Day", ylab = "Sporozoite Prevalence",
      main = paste("Temperature :", temp))
 ```
 
-1. The axis ranges should really be the same in all graphics. Add `ylim` and `xlim` arguments to fix the range. __Hint__: Work out the range before the `for` loop using the `range()` function.
+3. The axis ranges should really be the same in all graphics. Add `ylim` and `xlim` arguments to fix the range. __Hint__: Work out the range before the `for` loop using the `range()` function.
 
 ```{r  fig.keep='none', tidy=FALSE, eval=FALSE}
-ylims = range(malaria$Sporozoite.Prevalence)
+ylims = range(malaria$Sporozoite_Prevalence)
 xlims = range(malaria$Day)
 
-plot(group$Day, group$Sporozoite.Prevalence,
+plot(group$Day, group$Sporozoite_Prevalence,
      xlab = "Day", ylab = "Sporozoite Prevalence",
      main = paste("Temperature :", temp),
      ylim = ylims, xlim = xlims)
 ```
 
-1. For each graph, we want to add colour to the points to represent which experimental block they come from. We can first use `type = "n"` to produce and empty plot, then create additionl subsets of the data and use the `points()` function to add points to the graph.
+4. For each graph, we want to add colour to the points to represent which experimental block they come from. We can first use `type = "n"` to produce and empty plot, then create additionl subsets of the data and use the `points()` function to add points to the graph.
 
 __Hint__: You don't need `if` statements here.
 Just subset your data frame and pass this new data frame to the points function.
@@ -133,7 +133,7 @@ points(x[5], y[5], col="red")
 ```
 
 ```{r fig.keep='none', message=FALSE, tidy=FALSE, eval=FALSE}
-plot(group$Day, group$Sporozoite.Prevalence,
+plot(group$Day, group$Sporozoite_Prevalence,
      xlab = "Day", ylab = "Sporozoite Prevalence",
      main = paste("Temperature :", temp),
      ylim = ylims, xlim = xlims, type = "n")
@@ -144,16 +144,16 @@ block_1 = filter(group, Block == 1)
 
 ##pch=19 gives a solid dot
 ##See ?points
-points(block_0$Day, block_0$Sporozoite.Prevalence, col="blue", pch=19)
-points(block_1$Day, block_1$Sporozoite.Prevalence, col="red", pch=19)
+points(block_0$Day, block_0$Sporozoite_Prevalence, col="blue", pch=19)
+points(block_1$Day, block_1$Sporozoite_Prevalence, col="red", pch=19)
 ```
 
-1. For extra bonus points see if you can add an internal loop for each block to add the lines for each cup. You should end up with two colours but 4 line traces of each colour (and your points of course). Use the `lines()` function in the same way you used the `points()` function.
+5. For extra bonus points see if you can add an internal loop for each block to add the lines for each cup. You should end up with two colours but 4 line traces of each colour (and your points of course). Use the `lines()` function in the same way you used the `points()` function.
 
 __Hint__: This is an analogous loop to the one we started with, for each cup first filter the data down and then add some lines. You are allowed to have as deeply nested loops as you like.
 
 ```{r fig.keep='none', message=FALSE, tidy=FALSE, eval=FALSE}
-plot(group$Day, group$Sporozoite.Prevalence,
+plot(group$Day, group$Sporozoite_Prevalence,
      xlab = "Day", ylab = "Sporozoite Prevalence",
      main = paste("Temperature :", temp),
      ylim = ylims, xlim = xlims, type = "n")
@@ -164,15 +164,15 @@ block_1 = filter(group, Block == 1)
 
 ##pch=19 gives a solid dot
 ##See ?points
-points(block_0$Day, block_0$Sporozoite.Prevalence, col="blue", pch=19)
+points(block_0$Day, block_0$Sporozoite_Prevalence, col="blue", pch=19)
 for(cup in unique(block_0$Cup)) {
   cup_group = filter(block_0, Cup == cup)
-  lines(cup_group$Day, cup_group$Sporozoite.Prevalence, col = "blue")
+  lines(cup_group$Day, cup_group$Sporozoite_Prevalence, col = "blue")
 }
-points(block_1$Day, block_1$Sporozoite.Prevalence, col="red", pch=19)
+points(block_1$Day, block_1$Sporozoite_Prevalence, col="red", pch=19)
 for(cup in unique(block_1$Cup)) {
   cup_group = filter(block_1, Cup == cup)
-  lines(cup_group$Day, cup_group$Sporozoite.Prevalence, col = "red")
+  lines(cup_group$Day, cup_group$Sporozoite_Prevalence, col = "red")
 }
 ```
 
@@ -181,7 +181,7 @@ You should end up with a plot that looks something like this:
 ```{r message=FALSE, tidy=FALSE, echo=FALSE, eval=TRUE, fig.height=3}
 par(mfrow = c(2, 3), mar = c(2.5, 2.5, 1, 1), mgp = c(1, 0.5, 0))
 
-ylims = range(malaria$Sporozoite.Prevalence)
+ylims = range(malaria$Sporozoite_Prevalence)
 xlims = range(malaria$Day)
 
 for(temp in unique(malaria$Temperature)) {
@@ -189,7 +189,7 @@ for(temp in unique(malaria$Temperature)) {
   group = filter(malaria, Temperature == temp)
   
   cex_val = 0.6
-  plot(group$Day, group$Sporozoite.Prevalence,
+  plot(group$Day, group$Sporozoite_Prevalence,
        xlab = "Day", ylab = "Sporozoite Prevalence",
        main = paste("Temperature :", temp),
        ylim = ylims, xlim = xlims, type = "n",
@@ -201,20 +201,20 @@ for(temp in unique(malaria$Temperature)) {
   
   ## Plot the subsets
   blue = "#0000ff75"
-  points(block_0$Day, block_0$Sporozoite.Prevalence, 
+  points(block_0$Day, block_0$Sporozoite_Prevalence, 
          col=blue, pch=19, cex = cex_val)
   for(cup in unique(block_0$Cup)) {
     cup_group = filter(block_0, Cup == cup)
-    lines(cup_group$Day, cup_group$Sporozoite.Prevalence, 
+    lines(cup_group$Day, cup_group$Sporozoite_Prevalence, 
           col = blue, cex = cex_val)
   }
   
   red = "#ff000075"
-  points(block_1$Day, block_1$Sporozoite.Prevalence, 
+  points(block_1$Day, block_1$Sporozoite_Prevalence, 
          col=red, pch=19, cex = cex_val)
   for(cup in unique(block_1$Cup)) {
     cup_group = filter(block_1, Cup == cup)
-    lines(cup_group$Day, cup_group$Sporozoite.Prevalence, 
+    lines(cup_group$Day, cup_group$Sporozoite_Prevalence, 
           col = red, cex = cex_val)
   }
   
@@ -222,7 +222,8 @@ for(temp in unique(malaria$Temperature)) {
 ```
 
 Can you think of further ways to use programming to make this code neater?
-1. Suppose we wanted to save this multi-panel graph in a pdf file. Add the `pdf()` function to your code save the resulting graph:
+
+6. Suppose we wanted to save this multi-panel graph in a pdf file. Add the `pdf()` function to your code save the resulting graph:
 
 ```{r, eval=FALSE, echo=TRUE}
 # decide on a filename and path
@@ -235,7 +236,7 @@ plot(0)
 dev.off()
 ```
 
-1. Finally put your code, i.e. the `for` loop and plotting commands, in a function which takes the data frame as an argument.
+7. Finally put your code, i.e. the `for` loop and plotting commands, in a function which takes the data frame as an argument.
 
 ## Solutions
 
@@ -255,14 +256,14 @@ viewgraphs = function(malaria, save=FALSE) {
   
   par(mfrow = c(2, 3))
   
-  ylims = range(malaria$Sporozoite.Prevalence)
+  ylims = range(malaria$Sporozoite_Prevalence)
   xlims = range(malaria$Day)
   
   for(temp in unique(malaria$Temperature)) {
     
     group = filter(malaria, Temperature == temp)
     
-    plot(group$Day, group$Sporozoite.Prevalence,
+    plot(group$Day, group$Sporozoite_Prevalence,
          xlab = "Day", ylab = "Sporozoite Prevalence",
          main = paste("Temperature :", temp),
          ylim = ylims, xlim = xlims, type = "n")
@@ -272,16 +273,16 @@ viewgraphs = function(malaria, save=FALSE) {
     block_1 = filter(group, Block == 1)
     
     ## Plot the subsets
-    points(block_0$Day, block_0$Sporozoite.Prevalence, col="blue", pch=19)
+    points(block_0$Day, block_0$Sporozoite_Prevalence, col="blue", pch=19)
     for(cup in unique(block_0$Cup)) {
       cup_group = filter(block_0, Cup == cup)
-      lines(cup_group$Day, cup_group$Sporozoite.Prevalence, col = "blue")
+      lines(cup_group$Day, cup_group$Sporozoite_Prevalence, col = "blue")
     }
     
-    points(block_1$Day, block_1$Sporozoite.Prevalence, col="red", pch=19)
+    points(block_1$Day, block_1$Sporozoite_Prevalence, col="red", pch=19)
     for(cup in unique(block_1$Cup)) {
       cup_group = filter(block_1, Cup == cup)
-      lines(cup_group$Day, cup_group$Sporozoite.Prevalence, col = "red")
+      lines(cup_group$Day, cup_group$Sporozoite_Prevalence, col = "red")
     }
     
   }

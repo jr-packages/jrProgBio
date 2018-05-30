@@ -10,7 +10,7 @@
   \item{Temperature}{The temperature in Celcius}
   \item{Day}{The day of the observation}
   \item{Cup}{Experimental replicates nested within Block}
-  \item{Sporozoite.Prevalence}{Value between 0 and 1, the mean for that Cup}
+  \item{Sporozoite_Prevalence}{Value between 0 and 1, the mean for that Cup}
 }}
 \source{
 Shapiro LLM, Whitehead SA, Thomas MB (2017) Quantifying the effects of temperature on mosquito and parasite traits that determine the transmission potential of human malaria. PLOS Biology 15(10): e2003489. https://doi.org/10.1371/journal.pbio.2003489
