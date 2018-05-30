@@ -1,4 +1,5 @@
 ^data-raw$
 ^.*\.Rproj$
 ^\.Rproj\.user$
+Makefile
 .travis.yml
