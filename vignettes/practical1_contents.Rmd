@@ -254,6 +254,6 @@ The solutions can be viewed via
 
 ```{r eval=FALSE, echo = TRUE}
 library(jrProgramming)
-vignette("solutions1", package = "jrProgramming")
+vignette("solutions1", package = "jrProgBio")
 ```
 
