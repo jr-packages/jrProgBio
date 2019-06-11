@@ -3,6 +3,7 @@
 ^\.Rproj\.user$
 Makefile
 .travis.yml
+^.lintr$
 
 # sweave vignette
 vignettes/practical3.Rnw

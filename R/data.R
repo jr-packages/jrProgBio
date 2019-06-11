@@ -18,4 +18,3 @@
 #' 
 #' @source Shapiro LLM, Whitehead SA, Thomas MB (2017) Quantifying the effects of temperature on mosquito and parasite traits that determine the transmission potential of human malaria. PLOS Biology 15(10): e2003489. https://doi.org/10.1371/journal.pbio.2003489
 "malaria"
-
