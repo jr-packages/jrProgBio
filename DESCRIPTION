@@ -21,7 +21,9 @@ Imports:
 Suggests:
     formatR,
     knitr,
+    lintr,
     rmarkdown,
+    testthat,
     tufte
 VignetteBuilder: 
     knitr
