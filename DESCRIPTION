@@ -1,17 +1,29 @@
-Package: jrProgBio
 Type: Package
-Title: Jumping Rivers: Introduction to Programming for Biologists
+Package: jrProgBio
+Title: Jumping Rivers: Introduction to Programming for
+    Biologists
 Version: 0.0.1
-Authors@R: c(person("Roman", "Popat", email="roman@jumingrivers.com", role = "aut"),
-  person("Colin", "Gillespie", email="colin@jumpingrivers.com", role = c("aut", "cre")))
-Description: A package for the Introduction to Programming course run by Jumping Rivers.
-URL: http://www.jumpingrivers.com/
+Authors@R: 
+    person(given = "Jumping",
+           family = "Rivers",
+           role = c("aut", "cre"),
+           email = "info@jumpingrivers.com")
+Description: A package for the Introduction to Programming
+    course run by Jumping Rivers.
 License: GPL-3
+URL: https://www.jumpingrivers.com/
 Depends:
     R (>= 3.2.0)
 Imports:
-    ggplot2movies, dplyr
+    dplyr,
+    ggplot2movies,
+    jrProgramming
 Suggests:
-    knitr, tufte, rmarkdown, formatR
-VignetteBuilder: knitr
-RoxygenNote: 6.0.1
+    formatR,
+    knitr,
+    rmarkdown,
+    tufte
+VignetteBuilder: 
+    knitr
+Encoding: UTF-8
+RoxygenNote: 6.1.1
