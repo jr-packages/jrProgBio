@@ -28,6 +28,6 @@ Suggests:
 VignetteBuilder: 
     knitr
 Remotes:
-    jr-packages/jrIntroduction
+    jr-packages/jrProgramming
 Encoding: UTF-8
 RoxygenNote: 6.1.1
