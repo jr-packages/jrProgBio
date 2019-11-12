@@ -3,3 +3,7 @@ figure
 *.tex
 *.log
 *.out
+*.html
+practical?.R
+solutions?.R
+practical?.pdf

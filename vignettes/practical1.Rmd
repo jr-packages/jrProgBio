@@ -15,13 +15,8 @@ vignette: >
 ## Practical 1
 
 ```{r echo=FALSE}
-# pfft old way to do things or what?
-# results = "hide"; echo = FALSE
-
 library(tufte)
 knitr::opts_chunk$set(results = "hide", echo = FALSE)
-# gets rid of all the echo = echo, results = results
-# also makes it easier to be flexible about what shows where
 ```
 
 ```{r child = 'practical1_contents.Rmd'}

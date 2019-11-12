@@ -15,20 +15,20 @@ library(knitr)
 opts_knit$set(out.format = "latex")
 knit_theme$set(knit_theme$get("greyscale0"))
 
-options(replace.assign=FALSE,width=50)
+options(replace.assign = FALSE, width = 50)
 
-opts_chunk$set(fig.path='figure/graphics-', 
-               cache.path='cache/graphics-', 
-               fig.align='center', 
-               dev='pdf', fig.width=5, fig.height=5, 
-               fig.show='hold', cache=FALSE, par=TRUE)
-knit_hooks$set(crop=hook_pdfcrop)
+opts_chunk$set(fig.path = "figure/graphics-",
+               cache.path = "cache/graphics-",
+               fig.align = "center",
+               dev = "pdf", fig.width = 5, fig.height = 5,
+               fig.show = "hold", cache = FALSE, par = TRUE)
+knit_hooks$set(crop = hook_pdfcrop)
 
-knit_hooks$set(par=function(before, options, envir){
-    if (before && options$fig.show!='none') {
-        par(mar=c(3,3,2,1),cex.lab=.95,cex.axis=.9,
-            mgp=c(2,.7,0),tcl=-.01, las=1)
-}}, crop=hook_pdfcrop)
+knit_hooks$set(par = function(before, options, envir) {
+    if (before && options$fig.show != "none") {
+        par(mar = c(3, 3, 2, 1), cex.lab = .95, cex.axis = .9,
+            mgp = c(2, .7, 0), tcl = -.01, las = 1)
+}}, crop = hook_pdfcrop)
 ```
 
 ```{r, echo = FALSE, include = FALSE}
@@ -93,13 +93,13 @@ Our first go at simulating Monopoly will ignore community chest, chance cards, a
 board. The code in the `SimulateMonopoly` function, rolls the dice a certain number of times corresponding to the value we assign to `no_of_rolls`, and stores the squares that are landed on in the vector `landings`. 
 
 ```{r}
-SimulateMonopoly = function(no_of_rolls) {    
+SimulateMonopoly = function(no_of_rolls) {
   landings = numeric(40)
   ## Start at GO
   current = 1
-  for(i in 1:no_of_rolls) {
+  for (i in 1:no_of_rolls) {
     current = current + RollTwoDice()
-    if(current > 40) {
+    if (current > 40) {
       current = current - 40
     }
     landings[current] = landings[current] + 1
@@ -119,9 +119,6 @@ sim = SimulateMonopoly(no_of_rolls)
 ```
 
 ```{r, echo = FALSE}
-# no_of_rolls = 2000000
-# sim1 = SimulateMonopoly(no_of_rolls)
-# saveRDS(sim1, file=data/sim1.RData")
 sim = readRDS("sim1.RData")
 library("tibble")
 sim = as_tibble(sim)
@@ -132,12 +129,13 @@ We can then plot the results
 library("dplyr")
 ```
 ```{r, F1, fig.keep='none', tidy=FALSE}
-sim = sim %>% 
-  mutate(probability = value/sum(value))
+sim = sim %>%
+  mutate(probability = value / sum(value))
 library("ggplot2")
 monopoly_plot = ggplot(sim, aes(x = 1:40, y = probability)) +
   geom_point() +
-  labs(x = "Square", y = "Probability", caption = "Probability of landing on monopoly square.") +
+  labs(x = "Square", y = "Probability",
+       caption = "Probability of landing on monopoly square.") +
   ylim(0, 0.06)
 monopoly_plot
 ```
@@ -155,10 +153,10 @@ we will **only implement the first two community chest cards**:
 CommunityChest = function(current) {
   goto = current
   u = runif(1)
-  if(u < 1/16) {
-    goto = 1#Move to Go
-  }else if(u < 2/16) {
-    goto = 11#Go To Jail  :(
+  if (u < 1 / 16) {
+    goto = 1# Move to Go
+  }else if (u < 2 / 16) {
+    goto = 11 #Go To Jail  :(
   }
   return(goto)
 }
@@ -170,19 +168,19 @@ This function takes in the `current` position, with probability
 to incorporate the `CommunityChest` function:
 
 ```{r}
-SimulateMonopoly = function(no_of_rolls) {    
+SimulateMonopoly = function(no_of_rolls) {
   landings = numeric(40)
   ## Start at GO
   current = 1
-  for(i in 1:no_of_rolls) {
+  for (i in 1:no_of_rolls) {
     current = current + RollTwoDice()
-    if(current > 40) {
+    if (current > 40) {
       current = current - 40
     }
     landings[current] = landings[current] + 1
-    if(current == 3) {
+    if (current == 3) {
       cc_move = CommunityChest(current)
-      if(cc_move != current){
+      if (cc_move != current) {
         current = cc_move
         landings[current] = landings[current] + 1
       }
@@ -199,9 +197,6 @@ sim2 = SimulateMonopoly(no_of_rolls)
 ```
 
 ```{r, echo = FALSE}
-# no_of_rolls = 2000000
-# sim2 = SimulateMonopoly(no_of_rolls)
-# saveRDS(sim2, file="vignettes/sim2.RData")
 sim2 = readRDS("sim2.RData")
 sim2 = as_tibble(sim2)
 ```
@@ -213,12 +208,16 @@ library("dplyr")
 library("ggplot2")
 ```
 ```{r, F2, fig.keep='none', tidy=FALSE}
-sim2 = sim2 %>% 
-  mutate(probability = value/sum(value))
+sim2 = sim2 %>%
+  mutate(probability = value / sum(value))
 library("ggplot2")
 monopoly_plot2 = ggplot(sim2, aes(x = 1:40, y = probability)) +
   geom_point() +
-  labs(x = "Square", y = "Probability", caption = "Probability of landing on monopoly square with the first community chest card implemented. Incorporating a single cummunity chest card has very little effect. For this graphic, I used 2 million simulations!") +
+  labs(x = "Square", y = "Probability",
+       caption = "Probability of landing on monopoly square
+       with the first community chest card implemented.
+       Incorporating a single community chest card has very
+       little effect. For this graphic, I used 2 million simulations!") +
   ylim(0, 0.06)
 monopoly_plot2
 ```

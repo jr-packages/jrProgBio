@@ -5,17 +5,16 @@ editor_options:
 ---
 ```{r, include = FALSE, cache = FALSE}
 library(knitr)
-# opts_knit$set(out.format = "latex")
 knit_theme$set(knit_theme$get("greyscale0"))
 
-options(replace.assign=FALSE,width=50)
+options(replace.assign = FALSE, width = 50)
 
-opts_chunk$set(fig.path='figure/graphics-', 
-               cache.path='cache/graphics-', 
-               fig.align='center', 
-               fig.width=4, fig.height=4, 
-               fig.show='hold', cache=FALSE, par=TRUE)
-knit_hooks$set(crop=hook_pdfcrop)
+opts_chunk$set(fig.path = "figure/graphics-",
+               cache.path = "cache/graphics-",
+               fig.align = "center",
+               fig.width = 4, fig.height = 4,
+               fig.show = "hold", cache = FALSE, par = TRUE)
+knit_hooks$set(crop = hook_pdfcrop)
 ```
 
 In this question, we are going to use a `for` statement to
@@ -47,7 +46,7 @@ plot(treat_a$Sporozoite_Prevalence, treat_a$Day)
 
 ```{r results='hide', tidy=FALSE, echo = TRUE, eval=FALSE}
 par(mfrow = c(2, 3))
-for(temp in unique(malaria$Temperature)) {
+for (temp in unique(malaria$Temperature)) {
   group = filter(malaria, Temperature == temp)
   plot(group$Day, group$Sporozoite_Prevalence)
 }
@@ -64,7 +63,8 @@ for(temp in unique(malaria$Temperature)) {
 * What does the `par()` function do? And how can you use the `mfrow` argument?
 
 ```{r}
-## It sets up the graphical parameters of the plot and the mfrow argumement is used to split the plotting area into panels.
+## It sets up the graphical parameters of the plot and
+## the mfrow argumement is used to split the plotting area into panels.
 ```
 
 
@@ -129,7 +129,7 @@ y = rnorm(10)
 plot(x, y)
 
 # add a few coloured points
-points(x[5], y[5], col="red")
+points(x[5], y[5], col = "red")
 ```
 
 ```{r fig.keep='none', message=FALSE, tidy=FALSE, eval=FALSE}
@@ -144,8 +144,8 @@ block_1 = filter(group, Block == 1)
 
 ##pch=19 gives a solid dot
 ##See ?points
-points(block_0$Day, block_0$Sporozoite_Prevalence, col="blue", pch=19)
-points(block_1$Day, block_1$Sporozoite_Prevalence, col="red", pch=19)
+points(block_0$Day, block_0$Sporozoite_Prevalence, col = "blue", pch = 19)
+points(block_1$Day, block_1$Sporozoite_Prevalence, col = "red", pch = 19)
 ```
 
 5. For extra bonus points see if you can add an internal loop for each block to add the lines for each cup. You should end up with two colours but 4 line traces of each colour (and your points of course). Use the `lines()` function in the same way you used the `points()` function.
@@ -164,13 +164,13 @@ block_1 = filter(group, Block == 1)
 
 ##pch=19 gives a solid dot
 ##See ?points
-points(block_0$Day, block_0$Sporozoite_Prevalence, col="blue", pch=19)
-for(cup in unique(block_0$Cup)) {
+points(block_0$Day, block_0$Sporozoite_Prevalence, col = "blue", pch = 19)
+for (cup in unique(block_0$Cup)) {
   cup_group = filter(block_0, Cup == cup)
   lines(cup_group$Day, cup_group$Sporozoite_Prevalence, col = "blue")
 }
-points(block_1$Day, block_1$Sporozoite_Prevalence, col="red", pch=19)
-for(cup in unique(block_1$Cup)) {
+points(block_1$Day, block_1$Sporozoite_Prevalence, col = "red", pch = 19)
+for (cup in unique(block_1$Cup)) {
   cup_group = filter(block_1, Cup == cup)
   lines(cup_group$Day, cup_group$Sporozoite_Prevalence, col = "red")
 }
@@ -184,40 +184,37 @@ par(mfrow = c(2, 3), mar = c(2.5, 2.5, 1, 1), mgp = c(1, 0.5, 0))
 ylims = range(malaria$Sporozoite_Prevalence)
 xlims = range(malaria$Day)
 
-for(temp in unique(malaria$Temperature)) {
-  
+for (temp in unique(malaria$Temperature)) {
   group = filter(malaria, Temperature == temp)
-  
   cex_val = 0.6
   plot(group$Day, group$Sporozoite_Prevalence,
        xlab = "Day", ylab = "Sporozoite Prevalence",
        main = paste("Temperature :", temp),
        ylim = ylims, xlim = xlims, type = "n",
-       cex.lab=cex_val, cex.axis=cex_val, cex.main=cex_val, cex.sub=cex_val)
-  
+       cex.lab = cex_val, cex.axis = cex_val,
+       cex.main = cex_val, cex.sub = cex_val)
   ## Extract the points
   block_0 = filter(group, Block == 0)
   block_1 = filter(group, Block == 1)
-  
+
   ## Plot the subsets
   blue = "#0000ff75"
-  points(block_0$Day, block_0$Sporozoite_Prevalence, 
-         col=blue, pch=19, cex = cex_val)
-  for(cup in unique(block_0$Cup)) {
+  points(block_0$Day, block_0$Sporozoite_Prevalence,
+         col = blue, pch = 19, cex = cex_val)
+  for (cup in unique(block_0$Cup)) {
     cup_group = filter(block_0, Cup == cup)
-    lines(cup_group$Day, cup_group$Sporozoite_Prevalence, 
+    lines(cup_group$Day, cup_group$Sporozoite_Prevalence,
           col = blue, cex = cex_val)
   }
-  
   red = "#ff000075"
-  points(block_1$Day, block_1$Sporozoite_Prevalence, 
-         col=red, pch=19, cex = cex_val)
-  for(cup in unique(block_1$Cup)) {
+  points(block_1$Day, block_1$Sporozoite_Prevalence,
+         col = red, pch = 19, cex = cex_val)
+  for (cup in unique(block_1$Cup)) {
     cup_group = filter(block_1, Cup == cup)
-    lines(cup_group$Day, cup_group$Sporozoite_Prevalence, 
+    lines(cup_group$Day, cup_group$Sporozoite_Prevalence,
           col = red, cex = cex_val)
   }
-  
+
 }
 ```
 
@@ -248,48 +245,39 @@ vignette("solutions2", package = "jrProgBio")
 ```{r message=FALSE, tidy=FALSE, eval=FALSE}
 ## FULL SOLUTION
 viewgraphs = function(malaria, save=FALSE) {
-  
-  if(save) {
-    filename = paste("file", treat, ".pdf", sep="")
+
+  if (save) {
+    filename = paste("file", treat, ".pdf", sep = "")
     pdf(filename)
   }
-  
+
   par(mfrow = c(2, 3))
-  
   ylims = range(malaria$Sporozoite_Prevalence)
   xlims = range(malaria$Day)
-  
-  for(temp in unique(malaria$Temperature)) {
-    
+  for (temp in unique(malaria$Temperature)) {
     group = filter(malaria, Temperature == temp)
-    
     plot(group$Day, group$Sporozoite_Prevalence,
          xlab = "Day", ylab = "Sporozoite Prevalence",
          main = paste("Temperature :", temp),
          ylim = ylims, xlim = xlims, type = "n")
-    
     ## Extract the points
     block_0 = filter(group, Block == 0)
     block_1 = filter(group, Block == 1)
-    
+
     ## Plot the subsets
-    points(block_0$Day, block_0$Sporozoite_Prevalence, col="blue", pch=19)
-    for(cup in unique(block_0$Cup)) {
+    points(block_0$Day, block_0$Sporozoite_Prevalence, col = "blue", pch = 19)
+    for (cup in unique(block_0$Cup)) {
       cup_group = filter(block_0, Cup == cup)
       lines(cup_group$Day, cup_group$Sporozoite_Prevalence, col = "blue")
     }
-    
-    points(block_1$Day, block_1$Sporozoite_Prevalence, col="red", pch=19)
-    for(cup in unique(block_1$Cup)) {
+    points(block_1$Day, block_1$Sporozoite_Prevalence, col = "red", pch = 19)
+    for (cup in unique(block_1$Cup)) {
       cup_group = filter(block_1, Cup == cup)
       lines(cup_group$Day, cup_group$Sporozoite_Prevalence, col = "red")
     }
-    
   }
-  
-  if(save){
+  if (save) {
     dev.off()
   }
-  
 }
 ```
