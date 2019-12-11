@@ -36,10 +36,10 @@ fun1()
 
 1. Why does the final line return 0 and not 5.
     ```{r }
-    ## Fun1 uses the local variable v
+    ## fun1 uses the local variable v
     ```
-1. Delete line 3 in the above piece of code. Now change `Fun1()` to allow
-`v` to be passed as an argument, i.e. we can write `Fun1(5)`. Call
+1. Delete line 3 in the above piece of code. Now change `fun1()` to allow
+`v` to be passed as an argument, i.e. we can write `fun1(5)`. Call
 this function to make sure it works.
 
     ```{r}
@@ -64,20 +64,20 @@ fun3 = function(x) {
 
 1. Why does 
     ```{r echo=TRUE}
-    Fun2()
+    fun2()
     ```
     work, but this raises an error
     ```{r eval=FALSE, echo=TRUE}
-    Fun3()
+    fun3()
     ```
 
     ```{r}
-    ## Fun3 expects an argument x, but
+    ## fun3 expects an argument x, but
     ## we haven't given one and there is
     ## no default.
     ```
 
-1. Change `Fun2` so that it returns `x*x`.
+1. Change `fun2` so that it returns `x*x`.
 
     ```{r }
     fun2 = function(x = 10) {
@@ -98,7 +98,7 @@ fun4 = function(x) {
 }
 ``` 
 
-Change `Fun4` so that it:
+Change `fun4` so that it:
 
   * returns 1 if $x$ is positive;
   * returns -1 if $x$ is negative;
@@ -177,9 +177,9 @@ for (blob in a:5) {
 }
 ```
 
-1. In the code above, delete line 1. Now put the above code in a function called `Fun5`,
+1. In the code above, delete line 1. Now put the above code in a function called `fun5`,
 where `a` is passed as an argument, i.e. we can call
-`Fun5(1)`
+`fun5(1)`
 
     ```{r }
     fun5 = function(a) {
@@ -189,12 +189,12 @@ where `a` is passed as an argument, i.e. we can call
       }
       return(total)
     }
-    Fun5(1)
+    fun5(1)
     ```
 
 1. Alter the code so that the `for` loop goes from `a` to
 `b`, rather than `a` to $5$. Allow `b` to be passed as an
-argument, i.e. we can call `Fun5(1,5)`.
+argument, i.e. we can call `fun5(1,5)`.
     ```{r }
     fun5 = function(a, b) {
       total = 0
@@ -203,10 +203,10 @@ argument, i.e. we can call `Fun5(1,5)`.
       }
       return(total)
     }
-    Fun5(1, 5)
+    fun5(1, 5)
     ```
 
-1. Change `Fun5` so that it has default arguments of
+1. Change `fun5` so that it has default arguments of
 `a = 1` and `b = 10`.
 
     ```{r }
@@ -217,7 +217,7 @@ argument, i.e. we can call `Fun5(1,5)`.
       }
       return(total)
     }
-    Fun5(5)
+    fun5(5)
     ``` 
 
 
