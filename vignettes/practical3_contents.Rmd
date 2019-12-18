@@ -98,7 +98,7 @@ s_split = str_split(s, "")
 
 # collect the amino acid sequence using a loop
 aa = character(length(c))
-for (i in 1:length(aa)) {
+for (i in seq_along(aa)) {
   codon = c[i]
   aa[i] = translation[codon]
 }
