@@ -18,8 +18,8 @@ Imports:
     dplyr,
     ggplot2movies,
     jrProgramming,
-    stringr,
-    stringi
+    stringi,
+    stringr
 Suggests:
     formatR,
     knitr,
