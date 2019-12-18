@@ -20,7 +20,7 @@ sequence = function(n = 10, type = "dna") {
   if (type == "dna") {
     bases = c("C", "G", "A", "T")
   }
-  if(type == "rna") {
+  if (type == "rna") {
     bases = c("C", "G", "A", "U")
   }
   paste(sample(bases, n, TRUE), collapse = "")
@@ -90,7 +90,7 @@ s = sequence(1000, type = "rna")
 c = codons(s)
 
 # the mapping between codon and amino acid
-translation = c("AAA" = "Asn", "AAG" = "Asn", 
+translation = c("AAA" = "Asn", "AAG" = "Asn",
                 "UGG" = "Cys", "UGA" = "Cys")
 
 # split it into pieces
@@ -98,7 +98,7 @@ s_split = str_split(s, "")
 
 # collect the amino acid sequence using a loop
 aa = character(length(c))
-for(i in 1:length(aa)) {
+for (i in 1:length(aa)) {
   codon = c[i]
   aa[i] = translation[codon]
 }
@@ -112,7 +112,7 @@ translate = function(codons) {
                   "UGG" = "Cys", "UGA" = "Cys")
   s_split = str_split(s, "")
   aa = character(length(codons))
-  for(i in seq_along(aa)) {
+  for (i in seq_along(aa)) {
     codon = c[i]
     aa[i] = translation[codon]
   }
@@ -129,7 +129,7 @@ translate = function(codons) {
   s_split = str_split(s, "")
   aa = character(length(codons))
   misses = 0
-  for(i in seq_along(aa)) {
+  for (i in seq_along(aa)) {
     codon = c[i]
     aa[i] = translation[codon]
     if (is.na(aa[i])) missses = misses + 1
