@@ -6,7 +6,7 @@ Recall the `sequence` function that generates a random nucleotide sequence.
 
 ```{r, echo=TRUE}
 sequence = function(n = 10, type = "dna") {
-  if(type == "dna") {
+  if (type == "dna") {
     bases = c("C", "G", "A", "T")
   }
   paste(sample(bases, n, TRUE), collapse = "")
@@ -17,7 +17,7 @@ sequence = function(n = 10, type = "dna") {
 
 ```{r}
 sequence = function(n = 10, type = "dna") {
-  if(type == "dna") {
+  if (type == "dna") {
     bases = c("C", "G", "A", "T")
   }
   if(type == "rna") {
@@ -39,10 +39,10 @@ message("The value of x is ", x)
 ```{r}
 sequence = function(n = 10, type = "dna") {
   message("Creating ", type, " sequence")
-  if(type == "dna") {
+  if (type == "dna") {
     bases = c("C", "G", "A", "T")
   }
-  if(type == "rna") {
+  if (type == "rna") {
     bases = c("C", "G", "A", "U")
   }
   paste(sample(bases, n, TRUE), collapse = "")
@@ -67,7 +67,7 @@ codons = function(sequence, offset = 0, length = 3) {
 
 ```{r}
 codons = function(sequence, offset = 0, length = 3, reverse = FALSE) {
-  if(reverse) sequence = stringi::stri_reverse(sequence)
+  if (reverse) sequence = stringi::stri_reverse(sequence)
   start = seq(1 + offset, nchar(sequence), by = length)
   end = start + length - 1
   str_sub(sequence, start, end)
@@ -108,11 +108,11 @@ for(i in 1:length(aa)) {
 
 ```{r}
 translate = function(codons) {
-  translation = c("AAA" = "Asn", "AAG" = "Asn", 
+  translation = c("AAA" = "Asn", "AAG" = "Asn",
                   "UGG" = "Cys", "UGA" = "Cys")
   s_split = str_split(s, "")
   aa = character(length(codons))
-  for(i in 1:length(aa)) {
+  for(i in seq_along(aa)) {
     codon = c[i]
     aa[i] = translation[codon]
   }
@@ -124,15 +124,15 @@ translate = function(codons) {
 
 ```{r}
 translate = function(codons) {
-  translation = c("AAA" = "Asn", "AAG" = "Asn", 
+  translation = c("AAA" = "Asn", "AAG" = "Asn",
                   "UGG" = "Cys", "UGA" = "Cys")
   s_split = str_split(s, "")
   aa = character(length(codons))
   misses = 0
-  for(i in 1:length(aa)) {
+  for(i in seq_along(aa)) {
     codon = c[i]
     aa[i] = translation[codon]
-    if(is.na(aa[i])) missses = misses + 1
+    if (is.na(aa[i])) missses = misses + 1
   }
   message(misses, " codons could not be translated.")
   return(aa)
