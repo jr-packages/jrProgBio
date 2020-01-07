@@ -166,6 +166,8 @@ You should end up with plots that looks something like this for each temperature
 ```{r message=FALSE, tidy=FALSE, echo=FALSE, eval=TRUE, fig.height=3}
 temp = 34
 group = filter(malaria, Temperature == temp)
+ylims = range(malaria$Sporozoite_Prevalence)
+xlims = range(malaria$Day)
 ggplot(group, aes(x = Day, y = Sporozoite_Prevalence,
                   colour = factor(Block))) +
   geom_point() + 
