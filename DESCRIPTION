@@ -22,6 +22,7 @@ Imports:
     stringr
 Suggests:
     formatR,
+    ggplot2,
     knitr,
     lintr,
     rmarkdown,
