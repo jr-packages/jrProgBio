@@ -77,13 +77,13 @@ for (temp in unique(malaria$Temperature)) {
 1. The default axis labels aren't great. So we can change the $x$-axis label using `xlab()`:
 ```{r fig.keep='none', tidy=FALSE, echo=TRUE, eval=FALSE}
 ggplot(group, aes(x = Day, y = Sporozoite_Prevalence)) +
-  geom_point() + 
+  geom_point() +
   xlab("Day")
 ```
 ```{r, fig.keep="none", eval=FALSE}
 ggplot(group, aes(x = Day, y = Sporozoite_Prevalence)) +
-  geom_point() + 
-  xlab("Day") + 
+  geom_point() +
+  xlab("Day") +
   ylab("Sporozoite Prevalence")
 ```
 Use the `ylab()` function to alter the $y$-axis label.
@@ -92,9 +92,9 @@ Use the `ylab()` function to alter the $y$-axis label.
 
 ```{r F2, tidy=FALSE, fig.keep="none", eval=FALSE, echo=TRUE}
 ggplot(group, aes(x = Day, y = Sporozoite_Prevalence)) +
-  geom_point() + 
-  xlab("Day") + 
-  ylab("Sporozoite Prevalence") + 
+  geom_point() +
+  xlab("Day") +
+  ylab("Sporozoite Prevalence") +
   ggtitle("Temperature")
 ```
 
@@ -108,9 +108,9 @@ Rather than have a static title, make the title of each plot display the tempera
 
 ```{r fig.keep='none', tidy=FALSE, eval=FALSE}
 ggplot(group, aes(x = Day, y = Sporozoite_Prevalence)) +
-  geom_point() + 
-  xlab("Day") + 
-  ylab("Sporozoite Prevalence") + 
+  geom_point() +
+  xlab("Day") +
+  ylab("Sporozoite Prevalence") +
   ggtitle(paste("Temperature :", temp))
 ```
 
@@ -121,11 +121,11 @@ ylims = range(malaria$Sporozoite_Prevalence)
 xlims = range(malaria$Day)
 
 ggplot(group, aes(x = Day, y = Sporozoite_Prevalence)) +
-  geom_point() + 
-  xlab("Day") + 
-  ylab("Sporozoite Prevalence") + 
-  ggtitle(paste("Temperature :", temp)) + 
-  xlim(xlims[1], xlims[2]) + 
+  geom_point() +
+  xlab("Day") +
+  ylab("Sporozoite Prevalence") +
+  ggtitle(paste("Temperature :", temp)) +
+  xlim(xlims[1], xlims[2]) +
   ylim(ylims[1], ylims[2])
 ```
 
@@ -134,11 +134,11 @@ ggplot(group, aes(x = Day, y = Sporozoite_Prevalence)) +
 ```{r, fig.keep='none', tidy=FALSE, eval=FALSE}
 ggplot(group, aes(x = Day, y = Sporozoite_Prevalence,
                   colour = factor(Block))) +
-  geom_point() + 
-  xlab("Day") + 
-  ylab("Sporozoite Prevalence") + 
-  ggtitle(paste("Temperature :", temp)) + 
-  xlim(xlims[1], xlims[2]) + 
+  geom_point() +
+  xlab("Day") +
+  ylab("Sporozoite Prevalence") +
+  ggtitle(paste("Temperature :", temp)) +
+  xlim(xlims[1], xlims[2]) +
   ylim(ylims[1], ylims[2])
 ```
 
@@ -150,12 +150,12 @@ __Hint__: For the `geom_line()` have a look at the `group` aesthetic and the `in
 ```{r, fig.keep='none', tidy=FALSE, eval=FALSE}
 ggplot(group, aes(x = Day, y = Sporozoite_Prevalence,
                   colour = factor(Block))) +
-  geom_point() + 
-  geom_line(aes(group = interaction(Block,Cup))) + 
-  xlab("Day") + 
-  ylab("Sporozoite Prevalence") + 
-  ggtitle(paste("Temperature :", temp)) + 
-  xlim(xlims[1], xlims[2]) + 
+  geom_point() +
+  geom_line(aes(group = interaction(Block, Cup))) +
+  xlab("Day") +
+  ylab("Sporozoite Prevalence") +
+  ggtitle(paste("Temperature :", temp)) +
+  xlim(xlims[1], xlims[2]) +
   ylim(ylims[1], ylims[2])
 ```
 
@@ -170,12 +170,12 @@ ylims = range(malaria$Sporozoite_Prevalence)
 xlims = range(malaria$Day)
 ggplot(group, aes(x = Day, y = Sporozoite_Prevalence,
                   colour = factor(Block))) +
-  geom_point() + 
-  geom_line(aes(group = interaction(Block,Cup))) + 
-  xlab("Day") + 
-  ylab("Sporozoite Prevalence") + 
-  ggtitle(paste("Temperature :", temp)) + 
-  xlim(xlims[1], xlims[2]) + 
+  geom_point() +
+  geom_line(aes(group = interaction(Block, Cup))) +
+  xlab("Day") +
+  ylab("Sporozoite Prevalence") +
+  ggtitle(paste("Temperature :", temp)) +
+  xlim(xlims[1], xlims[2]) +
   ylim(ylims[1], ylims[2])
 ```
 
@@ -219,12 +219,12 @@ viewgraphs = function(malaria, save=FALSE, filename = "graphs.pdf") {
 
     g = ggplot(group, aes(x = Day, y = Sporozoite_Prevalence,
                           colour = factor(Block))) +
-      geom_point() + 
-      geom_line(aes(group = interaction(Block,Cup))) + 
-      xlab("Day") + 
-      ylab("Sporozoite Prevalence") + 
-      ggtitle(paste("Temperature :", temp)) + 
-      xlim(xlims[1], xlims[2]) + 
+      geom_point() +
+      geom_line(aes(group = interaction(Block, Cup))) +
+      xlab("Day") +
+      ylab("Sporozoite Prevalence") +
+      ggtitle(paste("Temperature :", temp)) +
+      xlim(xlims[1], xlims[2]) +
       ylim(ylims[1], ylims[2])
     print(g)
   }
