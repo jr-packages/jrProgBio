@@ -1,23 +1,21 @@
 ---
-title: "Solutions 1"
+title: "Practical 5 solutions"
 author: "Jumping Rivers"
 output: 
   tufte::tufte_handout:
     latex_engine: xelatex
   tufte::tufte_html: default
 vignette: >
-  %\VignetteIndexEntry{solutions1}
+  %\VignetteIndexEntry{solutions5}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
 
-## Practical 1 Solutions
 
-```{r echo=FALSE}
-library(tufte)
-# knitr::opts_chunk$set(results = "hide", echo = FALSE
+```{r include = FALSE}
+knitr::opts_chunk$set(results = "show", echo = TRUE)
 ```
 
 
-```{r child = 'practical1_contents.Rmd'}
+```{r child = 'practical5_contents.Rmd'}
 ```

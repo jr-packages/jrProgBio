@@ -7,3 +7,5 @@ Makefile
 
 # sweave vignette
 vignettes/practical3.Rnw
+
+glossary.md

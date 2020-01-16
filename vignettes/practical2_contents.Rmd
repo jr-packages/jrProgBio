@@ -1,297 +1,122 @@
----
-output: html_document
-editor_options: 
-  chunk_output_type: console
----
-```{r, include = FALSE, cache = FALSE}
-library(knitr)
-# opts_knit$set(out.format = "latex")
-knit_theme$set(knit_theme$get("greyscale0"))
+## Question 1
 
-options(replace.assign = FALSE, width = 50)
-
-opts_chunk$set(fig.path = "figure/graphics-",
-               cache.path = "cache/graphics-",
-               fig.align = "center",
-               fig.width = 4, fig.height = 4,
-               fig.show = "hold", cache = FALSE, par = TRUE)
-knit_hooks$set(crop = hook_pdfcrop)
+Consider the following simple function that produces a DNA sequence:
+```{r echo=TRUE}
+n = 5
+sequence = function() {
+  bases = c("C", "G", "A", "T")
+  n = 10
+  paste(sample(bases, n, TRUE), collapse = "")
+}
+sequence()
 ```
 
-In this question, we are going to use a `for` statement to
-loop over a data set and construct some plots. The data we are going to use comes from a paper on malarial transmission traits and how they vary with temperature[^1]. This data was published to Data Dryad[^2]. To obtain the data, run the following piece of R code. 
+1. Why does the final line return a sequence of length 10 and not 5.
+```{r }
+## sequence uses the local variable n
+```
 
-[^1]: Shapiro LLM, Whitehead SA, Thomas MB (2017) Quantifying the effects of temperature on mosquito and parasite traits that determine the transmission potential of human malaria. PLOS Biology 15(10): e2003489. https://doi.org/10.1371/journal.pbio.2003489
+2. Delete line 4 in the above piece of code. Now change `sequence()` to allow `v` to be passed as an argument, i.e. we can write `sequence(5)`. Call this function to make sure it works.
 
-[^2]: Shapiro LLM, Whitehead SA, Thomas MB (2017) Data from: Quantifying the effects of temperature on mosquito and parasite traits that determine the transmission potential of human malaria. Dryad Digital Repository. https://doi.org/10.5061/dryad.74839
+```{r}
+sequence = function(n) {
+  bases = c("C", "G", "A", "T")
+  paste(sample(bases, n, TRUE), collapse = "")
+}
+sequence(5)
+```
 
+
+## Question 2
 
 ```{r echo=TRUE}
-data(malaria, package = "jrProgBio")
-head(malaria)
+one = function(x = 10) {
+  return(x)
+}
+
+two = function(x) {
+  return(x)
+}
 ``` 
 
-The data frame `malaria` represents an experiment, where we have 6 temprerature treatments and measurements of sporozoite prevalence at over 25 days. Additionally the experiment is split into 2 blocks with each treatment in each block having 4 cups. A delightful design. We want to create a
-scatter and line plot of sporozoite prevalence over time, for each treatment combination. If you decide to read the original paper, we are recreating Figure 2 from the paper but with our own code.
-
-1. First we create a scatter plot of one treatment:
-
-```{r F1, echo=TRUE, eval=TRUE, tidy=FALSE, message=FALSE, fig.keep="none"}
-library(dplyr)
-treat_a = filter(malaria, Temperature == 21)
-plot(treat_a$Sporozoite_Prevalence, treat_a$Day)
+1. Why does 
+```{r echo=TRUE}
+one()
 ```
-
-
-2. To generate a scatter-plot for each temperature, we need to iterate over the different temperatures:
-
-```{r results='hide', tidy=FALSE, echo = TRUE, eval=FALSE}
-par(mfrow = c(2, 3))
-for (temp in unique(malaria$Temperature)) {
-  group = filter(malaria, Temperature == temp)
-  plot(group$Day, group$Sporozoite_Prevalence)
-}
+work, but this raises an error
+```{r eval=FALSE, echo=TRUE}
+two()
 ```
-* What does `unique(malaria$Temperature)` give?
-```{r}
-## It gives all temperatures
-```
-* In the `for` loop, what variable is changing? What are it's possible values?
-```{r}
-## The Temperature variable is changing.
-## It goes through the different temps.
-```
-* What does the `par()` function do? And how can you use the `mfrow` argument?
 
 ```{r}
-## It sets up the graphical parameters of the plot and the mfrow
-## argumement is used to split the plotting area into panels.
+## two() expects an argument x, but
+## we haven't given one and there is
+## no default.
 ```
 
+2. Change the `sequence` function so that it has a default value for `n`.
 
-## Questions
-
-1. The default axis labels aren't great. So we can change the $x$-axis label using `xlab`:
-```{r fig.keep='none', tidy=FALSE, echo=TRUE, eval=FALSE}
-plot(group$Day, group$Sporozoite_Prevalence, xlab = "Day")
-```
-```{r, fig.keep="none", eval=FALSE}
-plot(group$Day, group$Sporozoite_Prevalence,
-     xlab = "Day", ylab = "Sporozoite Prevalence")
-```
-Use the `ylab` argument to alter the $y$-axis label.
-
-2. To add a title to a plot we use the `main` argument, viz:
-
-```{r F2, tidy=FALSE, fig.keep="none", eval=FALSE, echo=TRUE}
-plot(group$Day, group$Sporozoite_Prevalence,
-     xlab = "Day", ylab = "Sporozoite Prevalence",
-     main = "Treatment")
-```
-
-We can combine strings/characters using the `paste()` function,
-
-```{r, eval=FALSE, echo=TRUE}
-paste("Treatment", temp)
-```
-
-Rather than have a static title, make the title of each plot display the treatment type.
-
-```{r fig.keep='none', tidy=FALSE, eval=FALSE}
-plot(group$Day, group$Sporozoite_Prevalence,
-     xlab = "Day", ylab = "Sporozoite Prevalence",
-     main = paste("Temperature :", temp))
-```
-
-3. The axis ranges should really be the same in all graphics. Add `ylim` and `xlim` arguments to fix the range. __Hint__: Work out the range before the `for` loop using the `range()` function.
-
-```{r  fig.keep='none', tidy=FALSE, eval=FALSE}
-ylims = range(malaria$Sporozoite_Prevalence)
-xlims = range(malaria$Day)
-
-plot(group$Day, group$Sporozoite_Prevalence,
-     xlab = "Day", ylab = "Sporozoite Prevalence",
-     main = paste("Temperature :", temp),
-     ylim = ylims, xlim = xlims)
-```
-
-4. For each graph, we want to add colour to the points to represent which experimental block they come from. We can first use `type = "n"` to produce and empty plot, then create additionl subsets of the data and use the `points()` function to add points to the graph.
-
-__Hint__: You don't need `if` statements here.
-Just subset your data frame and pass this new data frame to the points function.
-Below is an example of how we might highlight the 5th and 6th points in a dummy dataset:
-
-```{r echo=-1, fig.keep='none', eval=FALSE}
-# create the data
-x = 1:10
-y = rnorm(10)
-
-# plot it
-plot(x, y)
-
-# add a few coloured points
-points(x[5], y[5], col = "red")
-```
-
-```{r fig.keep='none', message=FALSE, tidy=FALSE, eval=FALSE}
-plot(group$Day, group$Sporozoite_Prevalence,
-     xlab = "Day", ylab = "Sporozoite Prevalence",
-     main = paste("Temperature :", temp),
-     ylim = ylims, xlim = xlims, type = "n")
-
-##Extract the points
-block_0 = filter(group, Block == 0)
-block_1 = filter(group, Block == 1)
-
-##pch=19 gives a solid dot
-##See ?points
-points(block_0$Day, block_0$Sporozoite_Prevalence, col = "blue", pch = 19)
-points(block_1$Day, block_1$Sporozoite_Prevalence, col = "red", pch = 19)
-```
-
-5. For extra bonus points see if you can add an internal loop for each block to add the lines for each cup. You should end up with two colours but 4 line traces of each colour (and your points of course). Use the `lines()` function in the same way you used the `points()` function.
-
-__Hint__: This is an analogous loop to the one we started with, for each cup first filter the data down and then add some lines. You are allowed to have as deeply nested loops as you like.
-
-```{r fig.keep='none', message=FALSE, tidy=FALSE, eval=FALSE}
-plot(group$Day, group$Sporozoite_Prevalence,
-     xlab = "Day", ylab = "Sporozoite Prevalence",
-     main = paste("Temperature :", temp),
-     ylim = ylims, xlim = xlims, type = "n")
-
-##Extract the points
-block_0 = filter(group, Block == 0)
-block_1 = filter(group, Block == 1)
-
-##pch=19 gives a solid dot
-##See ?points
-points(block_0$Day, block_0$Sporozoite_Prevalence, col = "blue", pch = 19)
-for (cup in unique(block_0$Cup)) {
-  cup_group = filter(block_0, Cup == cup)
-  lines(cup_group$Day, cup_group$Sporozoite_Prevalence, col = "blue")
+```{r }
+sequence = function(n = 10) {
+  bases = c("C", "G", "A", "T")
+  paste(sample(bases, n, TRUE), collapse = "")
 }
-points(block_1$Day, block_1$Sporozoite_Prevalence, col = "red", pch = 19)
-for (cup in unique(block_1$Cup)) {
-  cup_group = filter(block_1, Cup == cup)
-  lines(cup_group$Day, cup_group$Sporozoite_Prevalence, col = "red")
+sequence()
+``` 
+    
+## Question 3
+
+So far we have been creating random DNA sequences. Lets do another routine job, split them into codons. You could approach this in a number of ways, but lets start with something like this (you will need the `stringr` package).
+
+```{r, echo=TRUE}
+library(stringr)
+# create the sequence
+s = sequence()
+
+# establish indeces of the first and last base in the codon
+offset = 0
+start = seq(1 + offset, str_length(s), by = 3)
+end = start + 2
+
+# retrieve the codons
+str_sub(s, start, end)
+```
+
+1. In the code above, delete the first two lines and put the code into a function called `codons`.
+
+```{r}
+codons = function(sequence) {
+  offset = 0
+  start = seq(1 + offset, nchar(sequence), by = 3)
+  end = start + 2
+  str_sub(sequence, start, end)
 }
 ```
 
-You should end up with a plot that looks something like this:
+2. Alter the function such that offset is an argument with the default value of 0.
 
-```{r message=FALSE, tidy=FALSE, echo=FALSE, eval=TRUE, fig.height=3}
-par(mfrow = c(2, 3), mar = c(2.5, 2.5, 1, 1), mgp = c(1, 0.5, 0))
-
-ylims = range(malaria$Sporozoite_Prevalence)
-xlims = range(malaria$Day)
-
-for (temp in unique(malaria$Temperature)) {
-
-  group = filter(malaria, Temperature == temp)
-
-  cex_val = 0.6
-  plot(group$Day, group$Sporozoite_Prevalence,
-       xlab = "Day", ylab = "Sporozoite Prevalence",
-       main = paste("Temperature :", temp),
-       ylim = ylims, xlim = xlims, type = "n",
-       cex.lab = cex_val, cex.axis = cex_val, cex.main = cex_val,
-       cex.sub = cex_val)
-
-  ## Extract the points
-  block_0 = filter(group, Block == 0)
-  block_1 = filter(group, Block == 1)
-
-  ## Plot the subsets
-  blue = "#0000ff75"
-  points(block_0$Day, block_0$Sporozoite_Prevalence,
-         col = blue, pch = 19, cex = cex_val)
-  for (cup in unique(block_0$Cup)) {
-    cup_group = filter(block_0, Cup == cup)
-    lines(cup_group$Day, cup_group$Sporozoite_Prevalence,
-          col = blue, cex = cex_val)
-  }
-
-  red = "#ff000075"
-  points(block_1$Day, block_1$Sporozoite_Prevalence,
-         col = red, pch = 19, cex = cex_val)
-  for (cup in unique(block_1$Cup)) {
-    cup_group = filter(block_1, Cup == cup)
-    lines(cup_group$Day, cup_group$Sporozoite_Prevalence,
-          col = red, cex = cex_val)
-  }
-
+```{r}
+codons = function(sequence, offset = 0) {
+  start = seq(1 + offset, nchar(sequence), by = 3)
+  end = start + 2
+  str_sub(sequence, start, end)
 }
 ```
 
-Can you think of further ways to use programming to make this code neater?
+3. Lets imagine that codons could be any length, alter the function such that the length of the codons is an argument of the function with a default value.
 
-6. Suppose we wanted to save this multi-panel graph in a pdf file. Add the `pdf()` function to your code save the resulting graph:
-
-```{r, eval=FALSE, echo=TRUE}
-# decide on a filename and path
-filename = "my_awesome_figure.pdf"
-
-# do your plotting
-plot(0)
-
-# close the connection to the file
-dev.off()
+```{r}
+codons = function(sequence, offset = 0, length = 3) {
+  start = seq(1 + offset, nchar(sequence), by = length)
+  end = start + length - 1
+  str_sub(sequence, start, end)
+}
 ```
 
-7. Finally put your code, i.e. the `for` loop and plotting commands, in a function which takes the data frame as an argument.
-
+    
 ## Solutions
 
 Solutions are contained within this package:
 ```{r eval=FALSE, echo=TRUE}
 vignette("solutions2", package = "jrProgBio")
-```
-
-```{r message=FALSE, tidy=FALSE, eval=FALSE}
-## FULL SOLUTION
-viewgraphs = function(malaria, save=FALSE) {
-
-  if (save) {
-    filename = paste("file", treat_a, ".pdf", sep = "")
-    pdf(filename)
-  }
-
-  par(mfrow = c(2, 3))
-
-  ylims = range(malaria$Sporozoite_Prevalence)
-  xlims = range(malaria$Day)
-
-  for (temp in unique(malaria$Temperature)) {
-
-    group = filter(malaria, Temperature == temp)
-
-    plot(group$Day, group$Sporozoite_Prevalence,
-         xlab = "Day", ylab = "Sporozoite Prevalence",
-         main = paste("Temperature :", temp),
-         ylim = ylims, xlim = xlims, type = "n")
-
-    ## Extract the points
-    block_0 = filter(group, Block == 0)
-    block_1 = filter(group, Block == 1)
-
-    ## Plot the subsets
-    points(block_0$Day, block_0$Sporozoite_Prevalence, col = "blue", pch = 19)
-    for (cup in unique(block_0$Cup)) {
-      cup_group = filter(block_0, Cup == cup)
-      lines(cup_group$Day, cup_group$Sporozoite_Prevalence, col = "blue")
-    }
-
-    points(block_1$Day, block_1$Sporozoite_Prevalence, col = "red", pch = 19)
-    for (cup in unique(block_1$Cup)) {
-      cup_group = filter(block_1, Cup == cup)
-      lines(cup_group$Day, cup_group$Sporozoite_Prevalence, col = "red")
-    }
-
-  }
-
-  if (save) {
-    dev.off()
-  }
-
-}
 ```

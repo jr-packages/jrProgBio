@@ -1,0 +1,147 @@
+## Question 1
+
+Lets use some conditions and signals to the user to make our functions more flexible and user friendly. 
+
+Recall the `sequence` function that generates a random nucleotide sequence.
+
+```{r, echo=TRUE}
+sequence = function(n = 10, type = "dna") {
+  if (type == "dna") {
+    bases = c("C", "G", "A", "T")
+  }
+  paste(sample(bases, n, TRUE), collapse = "")
+}
+```
+
+1. Alter the above function to to use a different set of bases (replace `"T"` with `"U"`) if the value of `type` is `"rna"`.
+
+```{r}
+sequence = function(n = 10, type = "dna") {
+  if (type == "dna") {
+    bases = c("C", "G", "A", "T")
+  }
+  if (type == "rna") {
+    bases = c("C", "G", "A", "U")
+  }
+  paste(sample(bases, n, TRUE), collapse = "")
+}
+```
+
+The `message()` command provides us with an easier-to-use, more readable alternative to using `print()`. For instance, 
+
+```{r, echo = TRUE, message = TRUE}
+x = 5
+message("The value of x is ", x)
+```
+
+2. Use the message() function to tell the user which type of sequence is being created.
+
+```{r}
+sequence = function(n = 10, type = "dna") {
+  message("Creating ", type, " sequence")
+  if (type == "dna") {
+    bases = c("C", "G", "A", "T")
+  }
+  if (type == "rna") {
+    bases = c("C", "G", "A", "U")
+  }
+  paste(sample(bases, n, TRUE), collapse = "")
+}
+```
+
+
+## Question 2
+
+In practical 2 we created a function to split a sequence into codons with an offset to control the start point.
+
+```{r, echo=TRUE}
+library(stringr)
+codons = function(sequence, offset = 0, length = 3) {
+  start = seq(1 + offset, nchar(sequence), by = length)
+  end = start + length - 1
+  str_sub(sequence, start, end)
+}
+```
+
+1. What if our DNA strand is in the 3' to 5' orientation, we would first need to reverse the sequence before reading the codons. Lets add another argument called `reverse` that takes a boolean value, then make the function conditionally reverse the sequence dependent on the value of this argument. __Hint__: You can use `stringi::stri_reverse()` to reverse the order of characters in a string. 
+
+```{r}
+codons = function(sequence, offset = 0, length = 3, reverse = FALSE) {
+  if (reverse) sequence = stringi::stri_reverse(sequence)
+  start = seq(1 + offset, nchar(sequence), by = length)
+  end = start + length - 1
+  str_sub(sequence, start, end)
+}
+
+s = sequence()
+s
+codons(s)
+codons(s, reverse = TRUE)
+```
+
+
+## Question 3
+
+Lets say we wanted to translate an RNA sequence into amino acids. First of all to keep things simple we will only translate a small subset of codons, or else we will be here all day (you can fill in the rest when you get home). We could start with something like this:
+
+```{r, echo=TRUE}
+# create a sequence
+s = sequence(1000, type = "rna")
+c = codons(s)
+
+# the mapping between codon and amino acid
+translation = c("AAA" = "Asn", "AAG" = "Asn",
+                "UGG" = "Cys", "UGA" = "Cys")
+
+# split it into pieces
+s_split = str_split(s, "")
+
+# collect the amino acid sequence using a loop
+aa = character(length(c))
+for (i in seq_along(aa)) {
+  codon = c[i]
+  aa[i] = translation[codon]
+}
+```
+
+1. Turn the above into a function called `translate` that translates an RNA sequence into amino acids.
+
+```{r}
+translate = function(codons) {
+  translation = c("AAA" = "Asn", "AAG" = "Asn",
+                  "UGG" = "Cys", "UGA" = "Cys")
+  s_split = str_split(s, "")
+  aa = character(length(codons))
+  for (i in seq_along(aa)) {
+    codon = c[i]
+    aa[i] = translation[codon]
+  }
+  return(aa)
+}
+```
+
+2. At each iteration of the loop, keep a record of whether or not the codon was translated successfully and at the end of the looping send a message to the console saying how many codons were not translated successfully.
+
+```{r}
+translate = function(codons) {
+  translation = c("AAA" = "Asn", "AAG" = "Asn",
+                  "UGG" = "Cys", "UGA" = "Cys")
+  s_split = str_split(s, "")
+  aa = character(length(codons))
+  misses = 0
+  for (i in seq_along(aa)) {
+    codon = c[i]
+    aa[i] = translation[codon]
+    if (is.na(aa[i])) missses = misses + 1
+  }
+  message(misses, " codons could not be translated.")
+  return(aa)
+}
+```
+    
+## Solutions
+
+Solutions are contained within this package:
+```{r eval=FALSE, echo=TRUE}
+vignette("solutions3", package = "jrProgBio")
+```

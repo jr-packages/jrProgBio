@@ -1,0 +1,237 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+```{r, include = FALSE, cache = FALSE}
+library(knitr)
+# opts_knit$set(out.format = "latex")
+knit_theme$set(knit_theme$get("greyscale0"))
+
+options(replace.assign = FALSE, width = 50)
+
+opts_chunk$set(fig.path = "figure/graphics-",
+               cache.path = "cache/graphics-",
+               fig.align = "center",
+               fig.width = 4, fig.height = 4,
+               fig.show = "hold", cache = FALSE, par = TRUE)
+knit_hooks$set(crop = hook_pdfcrop)
+```
+
+In this question, we are going to use a `for` statement to
+loop over a data set and construct some plots. The data we are going to use comes from a paper on malarial transmission traits and how they vary with temperature[^1]. This data was published to Data Dryad[^2]. To obtain the data, run the following piece of R code. 
+
+[^1]: Shapiro LLM, Whitehead SA, Thomas MB (2017) Quantifying the effects of temperature on mosquito and parasite traits that determine the transmission potential of human malaria. PLOS Biology 15(10): e2003489. https://doi.org/10.1371/journal.pbio.2003489
+
+[^2]: Shapiro LLM, Whitehead SA, Thomas MB (2017) Data from: Quantifying the effects of temperature on mosquito and parasite traits that determine the transmission potential of human malaria. Dryad Digital Repository. https://doi.org/10.5061/dryad.74839
+
+
+```{r echo=TRUE}
+data(malaria, package = "jrProgBio")
+head(malaria)
+``` 
+
+The data frame `malaria` represents an experiment, where we have 6 temprerature treatments and measurements of sporozoite prevalence at over 25 days. Additionally the experiment is split into 2 blocks with each treatment in each block having 4 cups. A delightful design. We want to create a
+scatter and line plot of sporozoite prevalence over time, for each treatment combination. If you decide to read the original paper, we are recreating Figure 2 from the paper but with our own code.
+
+1. First we create a scatter plot of one treatment:
+
+```{r F1, echo=TRUE, eval=TRUE, tidy=FALSE, message=FALSE, fig.keep="none"}
+library("dplyr")
+library("ggplot2")
+treat_a = filter(malaria, Temperature == 21)
+ggplot(treat_a, aes(x = Day, y = Sporozoite_Prevalence)) +
+  geom_point()
+```
+
+
+2. To generate a scatter-plot for each temperature, we need to iterate over the different temperatures:
+
+```{r results='hide', tidy=FALSE, echo = TRUE, eval=FALSE}
+for (temp in unique(malaria$Temperature)) {
+  group = filter(malaria, Temperature == temp)
+  g = ggplot(group, aes(x = Day, y = Sporozoite_Prevalence)) +
+    geom_point()
+  print(g)
+  readline("Hit return for next plot")
+}
+```
+* What does `unique(malaria$Temperature)` give?
+```{r}
+## It gives all temperatures
+```
+* In the `for` loop, what variable is changing? What are it's possible values?
+```{r}
+## The Temperature variable is changing.
+## It goes through the different temps.
+```
+* What does the `readline()` function do?
+
+```{r}
+## It halts execution, waits for user input
+```
+
+
+## Questions
+
+1. The default axis labels aren't great. So we can change the $x$-axis label using `xlab()`:
+```{r fig.keep='none', tidy=FALSE, echo=TRUE, eval=FALSE}
+ggplot(group, aes(x = Day, y = Sporozoite_Prevalence)) +
+  geom_point() +
+  xlab("Day")
+```
+```{r, fig.keep="none", eval=FALSE}
+ggplot(group, aes(x = Day, y = Sporozoite_Prevalence)) +
+  geom_point() +
+  xlab("Day") +
+  ylab("Sporozoite Prevalence")
+```
+Use the `ylab()` function to alter the $y$-axis label.
+
+2. To add a title to a plot we could use the `ggtitle()` function, viz:
+
+```{r F2, tidy=FALSE, fig.keep="none", eval=FALSE, echo=TRUE}
+ggplot(group, aes(x = Day, y = Sporozoite_Prevalence)) +
+  geom_point() +
+  xlab("Day") +
+  ylab("Sporozoite Prevalence") +
+  ggtitle("Temperature")
+```
+
+We can combine strings/characters using the `paste()` function,
+
+```{r, eval=FALSE, echo=TRUE}
+paste("Temperature", temp)
+```
+
+Rather than have a static title, make the title of each plot display the temperature.
+
+```{r fig.keep='none', tidy=FALSE, eval=FALSE}
+ggplot(group, aes(x = Day, y = Sporozoite_Prevalence)) +
+  geom_point() +
+  xlab("Day") +
+  ylab("Sporozoite Prevalence") +
+  ggtitle(paste("Temperature :", temp))
+```
+
+3. The axis ranges should really be the same in all graphics. Add `ylim()` and `xlim()` to fix the range. __Hint__: Work out the range before the `for` loop using the `range()` function.
+
+```{r  fig.keep='none', tidy=FALSE, eval=FALSE}
+ylims = range(malaria$Sporozoite_Prevalence)
+xlims = range(malaria$Day)
+
+ggplot(group, aes(x = Day, y = Sporozoite_Prevalence)) +
+  geom_point() +
+  xlab("Day") +
+  ylab("Sporozoite Prevalence") +
+  ggtitle(paste("Temperature :", temp)) +
+  xlim(xlims[1], xlims[2]) +
+  ylim(ylims[1], ylims[2])
+```
+
+4. For each graph, we want to add colour to the points to represent which experimental block they come from. 
+
+```{r, fig.keep='none', tidy=FALSE, eval=FALSE}
+ggplot(group, aes(x = Day, y = Sporozoite_Prevalence,
+                  colour = factor(Block))) +
+  geom_point() +
+  xlab("Day") +
+  ylab("Sporozoite Prevalence") +
+  ggtitle(paste("Temperature :", temp)) +
+  xlim(xlims[1], xlims[2]) +
+  ylim(ylims[1], ylims[2])
+```
+
+
+5. For extra bonus points see if you can add the lines for each cup. You should end up with two colours but 4 line traces of each colour (and your points of course). Use the `geom_line()` function in the same way you used the `geom_point()` function.
+
+__Hint__: For the `geom_line()` have a look at the `group` aesthetic and the `interaction()` function.
+
+```{r, fig.keep='none', tidy=FALSE, eval=FALSE}
+ggplot(group, aes(x = Day, y = Sporozoite_Prevalence,
+                  colour = factor(Block))) +
+  geom_point() +
+  geom_line(aes(group = interaction(Block, Cup))) +
+  xlab("Day") +
+  ylab("Sporozoite Prevalence") +
+  ggtitle(paste("Temperature :", temp)) +
+  xlim(xlims[1], xlims[2]) +
+  ylim(ylims[1], ylims[2])
+```
+
+
+
+You should end up with plots that looks something like this for each temperature:
+
+```{r message=FALSE, tidy=FALSE, echo=FALSE, eval=TRUE, fig.height=3}
+temp = 34
+group = filter(malaria, Temperature == temp)
+ylims = range(malaria$Sporozoite_Prevalence)
+xlims = range(malaria$Day)
+ggplot(group, aes(x = Day, y = Sporozoite_Prevalence,
+                  colour = factor(Block))) +
+  geom_point() +
+  geom_line(aes(group = interaction(Block, Cup))) +
+  xlab("Day") +
+  ylab("Sporozoite Prevalence") +
+  ggtitle(paste("Temperature :", temp)) +
+  xlim(xlims[1], xlims[2]) +
+  ylim(ylims[1], ylims[2])
+```
+
+Can you think of further ways to use programming to make this code neater?
+
+6. Suppose we wanted to save these graphs in a pdf file. Add the `pdf()` function to your code save the resulting graph:
+
+```{r, eval=FALSE, echo=TRUE}
+# decide on a filename and path
+filename = "my_awesome_figure.pdf"
+
+# do your plotting
+
+# close the connection to the file
+dev.off()
+```
+
+7. Finally put your code, i.e. the `for` loop and plotting commands, in a function which takes the data frame as an argument.
+
+## Solutions
+
+Solutions are contained within this package:
+```{r eval=FALSE, echo=TRUE}
+vignette("solutions2", package = "jrProgBio")
+```
+
+```{r message=FALSE, tidy=FALSE, eval=FALSE}
+## FULL SOLUTION
+viewgraphs = function(malaria, save=FALSE, filename = "graphs.pdf") {
+
+  if (save) {
+    pdf(filename)
+  }
+
+  ylims = range(malaria$Sporozoite_Prevalence)
+  xlims = range(malaria$Day)
+
+  for (temp in unique(malaria$Temperature)) {
+
+    group = filter(malaria, Temperature == temp)
+
+    g = ggplot(group, aes(x = Day, y = Sporozoite_Prevalence,
+                          colour = factor(Block))) +
+      geom_point() +
+      geom_line(aes(group = interaction(Block, Cup))) +
+      xlab("Day") +
+      ylab("Sporozoite Prevalence") +
+      ggtitle(paste("Temperature :", temp)) +
+      xlim(xlims[1], xlims[2]) +
+      ylim(ylims[1], ylims[2])
+    print(g)
+  }
+
+  if (save) {
+    dev.off()
+  }
+
+}
+```

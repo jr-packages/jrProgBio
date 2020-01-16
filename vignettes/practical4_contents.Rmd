@@ -1,0 +1,89 @@
+In this practical we're going to have a go at building a function to automatically create the directory structure we've just talked about in chapter 4. 
+
+# Question 1
+
+a) We can use the `dir.create()` function to create a directory in R. Here's a starter function that will create a project directory depending on the users input
+    ```{r, echo = TRUE}
+    create_workflow = function(project_name) {
+      dir.create(project_name)
+    }
+    ```
+
+b) Now we need to create the directories `input`, `R`, `graphics` and `output` within the main project directory. To do this we'll need to create the filepath for each. `file.path()` is a handy function that will help.
+    ```{r, echo = TRUE}
+    file.path("project", "directory")
+    ```
+    ```{r}
+    create_workflow = function(project_name) {
+      dir.create(project_name)
+        for (directory in c("input", "R", "graphics", "output")) {
+        dir.create(path = file.path(project_name, directory))
+      }
+    }
+    ```
+
+c) Now we need to create the R scripts `load.R`, `clean.R`, `func.R`, `do.R` and `graphics.R` within the `R` directory. The `file.create()` function can create files of any extension. So to create an R file we could do 
+    ```{r, eval = FALSE, echo = TRUE}
+    file.create("load.R")
+    ```
+and this will create an empty R script called `load.R`. Hint: You can do this with a for loop. Remember your file paths!
+    ```{r}
+    create_workflow = function(project_name) {
+      dir.create(path = project_name)
+      for (directory in c("input", "R", "graphics", "output")) {
+        dir.create(path = file.path(project_name, directory))
+      }
+      for (rfile in c("load", "clean", "func", "do", "graphics")) {
+        fname = paste0(rfile, ".R")
+        fpath = file.path(project_name, "R", fname)
+        file.create(fpath)
+      }
+    }
+    ```
+    
+    
+# Question 2 - Harder
+
+This question is much harder than the first, you have been warned! It would be ideal if we could insert the source commands into the R scripts as well. You can append lines of text to a file using the `writeLines()`, `file()` and `close()` functions. For instance, 
+```{r, eval = FALSE, echo = TRUE}
+file.create("clean.R")
+file_conn = file("clean.R")
+writeLines("source('load.R')", file_conn)
+close(file_conn)
+```
+\noindent The contents of each file should look like so:
+
+- `load.R` - empty
+- `clean.R` - One line of code: `source("project_name/R/load.R")`
+- `func.R` - One line of code: `source("project_name/R/clean.R")`
+- `do.R` - One line of code: `source("project_name/R/func.R")`
+- `graphics.R` - One line of code: `source("project_name/R/do.R")`
+
+The idea being that when you call `source("do.R")` in `graphics.R`, it will run all four previous files.
+```{r}
+create_workflow = function(project_name) {
+  dir.create(path = project_name)
+  for (directory in c("input", "R", "graphics", "output")) {
+    dir.create(path = file.path(project_name, directory))
+  }
+  for (rfile in c("load", "clean", "func", "do", "graphics")) {
+    fname = paste0(rfile, ".R")
+    fpath = file.path(project_name, "R", fname)
+    file.create(fpath)
+    if (exists("code")) {
+      print(exists("code"))
+      file_conn = file(fpath)
+      writeLines(code, file_conn)
+      close(file_conn)
+    }
+    code = paste0('source("', fpath, '")')
+  }
+}
+```
+
+## Solutions
+
+Solutions are contained within this package:
+```{r eval=FALSE, echo=TRUE}
+vignette("solutions4", package = "jrProgramming")
+```
