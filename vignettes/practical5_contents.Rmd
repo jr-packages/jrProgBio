@@ -186,6 +186,7 @@ Can you think of further ways to use programming to make this code neater?
 ```{r, eval=FALSE, echo=TRUE}
 # decide on a filename and path
 filename = "my_awesome_figure.pdf"
+pdf(filename)
 
 # do your plotting
 
@@ -199,7 +200,7 @@ dev.off()
 
 Solutions are contained within this package:
 ```{r eval=FALSE, echo=TRUE}
-vignette("solutions2", package = "jrProgBio")
+vignette("solutions5", package = "jrProgBio")
 ```
 
 ```{r message=FALSE, tidy=FALSE, eval=FALSE}
