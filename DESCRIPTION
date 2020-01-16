@@ -13,19 +13,18 @@ Description: A package for the Introduction to Programming
 License: GPL-3
 URL: https://www.jumpingrivers.com/
 Depends:
-    R (>= 3.2.0)
-Imports:
-    dplyr,
-    ggplot2movies,
-    jrProgramming,
-    stringi,
-    stringr
+    R (>= 3.5.0)
 Suggests:
+    dplyr,
     formatR,
     ggplot2,
+    ggplot2movies,
+    jrProgramming,
     knitr,
     lintr,
     rmarkdown,
+    stringi,
+    stringr,
     testthat,
     tufte
 VignetteBuilder: 
